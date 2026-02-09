@@ -1,0 +1,52 @@
+/* Custom Dashboard Styles */
+.icon-box {
+    transition: transform 0.2s ease;
+}
+
+.card:hover .icon-box {
+    transform: scale(1.1);
+}
+
+.table> :not(caption)>*>* {
+    padding: 1rem 0.5rem;
+}
+
+.bg-primary-subtle {
+    background-color: #cfe2ff;
+}
+
+.text-primary-subtle {
+    color: #084298;
+}
+
+.bg-success-subtle {
+    background-color: #d1e7dd;
+}
+
+.text-success-subtle {
+    color: #0f5132;
+}
+
+.bg-danger-subtle {
+    background-color: #f8d7da;
+}
+
+.text-danger-subtle {
+    color: #842029;
+}
+
+.bg-warning-subtle {
+    background-color: #fff3cd;
+}
+
+.text-warning-subtle {
+    color: #664d03;
+}
+
+.bg-info-subtle {
+    background-color: #cff4fc;
+}
+
+.text-info-subtle {
+    color: #055160;
+}

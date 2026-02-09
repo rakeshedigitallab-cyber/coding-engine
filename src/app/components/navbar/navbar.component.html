@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark-blue px-3 py-2 sticky-top shadow-sm">
+    <div class="container-fluid p-0">
+
+        <!-- Branding & Toggle -->
+        <div class="d-flex align-items-center justify-content-between me-2" style="width: 214px;">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-leaf text-success fs-4"></i>
+                <span class="fw-bold text-white fs-5">CodingEngine</span>
+            </a>
+            <button class="btn btn-link text-white-50 p-0" type="button" (click)="toggle()">
+                <i class="fa-solid fa-bars fs-5"></i>
+            </button>
+        </div>
+
+        <!-- Search Form -->
+        <form class="d-flex flex-grow-1" style="max-width: 300px;">
+            <input class="form-control form-control-sm bg-transparent border-0 text-white placeholder-white-50"
+                type="search" placeholder="Type for search..." aria-label="Search">
+        </form>
+
+        <!-- Right Side Icons -->
+        <div class="d-flex align-items-center ms-auto">
+            <ul class="navbar-nav flex-row align-items-center gap-3">
+
+                <!-- Grid Icon -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="#">
+                        <i class="fa-solid fa-table-cells fs-5"></i>
+                    </a>
+                </li>
+
+                <!-- Notifications -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50 position-relative" href="#">
+                        <i class="fa-regular fa-bell fs-5"></i>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
+                            style="width: 8px; height: 8px;">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    </a>
+                </li>
+
+                <!-- User Profile Icon -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="#">
+                        <i class="fa-regular fa-user fs-5"></i>
+                    </a>
+                </li>
+
+                <!-- More Options -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="#">
+                        <i class="fa-solid fa-ellipsis-vertical fs-5"></i>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>

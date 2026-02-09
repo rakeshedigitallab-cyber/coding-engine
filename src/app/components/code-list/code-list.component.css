@@ -1,0 +1,180 @@
+.header-section {
+    background-color: #25476a;
+    /* Dark blue background matching navbar */
+    width: 100%;
+}
+
+#content-container {
+    height: 100%;
+}
+
+.main-card-container {
+    margin-top: -45px;
+    /* Negative margin to overlap the blue section */
+    position: relative;
+    z-index: 10;
+}
+
+#page-head {
+    margin-bottom: 0;
+}
+
+.page-header {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+    font-weight: 500;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    list-style: none;
+    font-size: 0.8rem;
+}
+
+.breadcrumb li a {
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb li a:hover {
+    color: #fff !important;
+}
+
+.breadcrumb li:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.text-dark-blue {
+    color: #25476a;
+}
+
+.border-blue {
+    border-color: #25476a !important;
+}
+
+.search-container .input-group {
+    width: 250px;
+}
+
+.btn-outline-light-blue {
+    color: #25476a;
+    border-color: #e1e1e1;
+    background-color: #fff;
+}
+
+.btn-outline-light-blue:hover {
+    background-color: #f7f9fa;
+    color: #25476a;
+    border-color: #25476a;
+}
+
+/* Table Styling */
+.table thead th {
+    background-color: #f8f9fa;
+    color: #25476a;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 2px solid #e1e1e1;
+}
+
+.table tbody td {
+    font-size: 0.9rem;
+    color: #4d627b;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.sort-icons {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-top: -3px;
+    opacity: 0.3;
+}
+
+.sort-icons i.active {
+    opacity: 1;
+    color: #25476a;
+}
+
+/* Custom Scrollbar for Table */
+.scrollbar-custom::-webkit-scrollbar {
+    height: 5px;
+    /* Sleek thin line height */
+    width: 5px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: #f0f2f5 !important;
+    /* Restored the light gray track line */
+    border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: #25476a !important;
+    /* Dark blue thumb line */
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    /* Added hand cursor */
+}
+
+.scrollbar-custom {
+    margin-bottom: 1rem;
+    /* Space between table and pagination */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: #1a324b !important;
+}
+
+/* Hide scrollbar buttons */
+.scrollbar-custom::-webkit-scrollbar-button {
+    display: none !important;
+}
+
+/* Pagination Styling */
+.pagination .page-link {
+    color: #25476a;
+    border-color: #e1e1e1;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #25476a;
+    border-color: #25476a;
+    color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #ccc;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.column-dropdown .dropdown-item:hover {
+    background-color: #f7f9fa;
+}
+
+.column-dropdown .form-check-input:checked {
+    background-color: #25476a;
+    border-color: #25476a;
+}

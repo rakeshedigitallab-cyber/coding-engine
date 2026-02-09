@@ -1,0 +1,165 @@
+<div class="d-flex flex-column flex-shrink-0 bg-light-gray h-100 sidebar-container overflow-x-hidden"
+    [class.collapsed]="!layoutService.isSidebarOpen()">
+    <!-- User Profile Section (Hidden in collapsed mode) -->
+    @if (layoutService.isSidebarOpen()) {
+    <div class="profile-section text-center pt-4 pb-0 bg-light-gray border-bottom-0 fade-in">
+        <div class="position-relative d-inline-block mb-2">
+            <img [src]="userImage" alt="Profile" class="rounded-circle profile-img" width="80" height="80">
+        </div>
+        <div class="profile-info-container mt-2">
+            <div class="d-flex align-items-center justify-content-center cursor-pointer"
+                (click)="isProfileExpanded = !isProfileExpanded">
+                <span class="fw-bold text-dark fs-6">{{ userName }}</span>
+                <i class="fa-solid fa-caret-down ms-2 text-muted transition-icon"
+                    [class.rotate-180]="isProfileExpanded"></i>
+            </div>
+            <div class="text-muted small" style="font-size: 0.8rem;">{{ userEmail }}</div>
+        </div>
+
+        <!-- Profile Dropdown Menu -->
+        <div class="profile-menu mt-1" [class.show]="isProfileExpanded">
+            <ul class="list-unstyled mb-0 px-3">
+                <li class="profile-menu-item mb-1">
+                    <a href="javascript:void(0)"
+                        class="d-flex align-items-center py-2 px-3 text-decoration-none text-secondary">
+                        <i class="fa-regular fa-user me-3 fs-5"></i>
+                        <span class="fw-medium">View Profile</span>
+                    </a>
+                </li>
+                <li class="profile-menu-item mb-1">
+                    <a href="javascript:void(0)"
+                        class="d-flex align-items-center py-2 px-3 text-decoration-none text-secondary">
+                        <i class="fa-solid fa-gear me-3 fs-5"></i>
+                        <span class="fw-medium">Settings</span>
+                    </a>
+                </li>
+                <li class="profile-menu-item mb-1">
+                    <a href="javascript:void(0)"
+                        class="d-flex align-items-center py-2 px-3 text-decoration-none text-secondary">
+                        <i class="fa-solid fa-circle-info me-3 fs-5"></i>
+                        <span class="fw-medium">Help</span>
+                    </a>
+                </li>
+                <li class="profile-menu-item text-danger">
+                    <a href="javascript:void(0)"
+                        class="d-flex align-items-center py-2 px-3 text-decoration-none text-danger">
+                        <i class="fa-solid fa-lock me-3 fs-5"></i>
+                        <span class="fw-medium">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    } @else {
+    <!-- Spacer for collapsed mode top -->
+    <div class="py-3"></div>
+    }
+
+    <!-- Navigation Menu -->
+    <ul class="list-unstyled flex-column mb-auto ps-0 w-100">
+        @for (item of menuItems; track item.title) {
+        @if (item.isHeader) {
+        @if (layoutService.isSidebarOpen()) {
+        <li class="nav-header text-uppercase text-secondary fw-bold px-4 mt-3 mb-2 fade-in"
+            style="font-size: 0.7rem; letter-spacing: 0.5px;">
+            {{ item.title }}
+        </li>
+        }
+        } @else {
+        <li class="nav-item w-100" [title]="!layoutService.isSidebarOpen() ? item.title : ''">
+            <!-- Item with children -->
+            @if (item.children) {
+            <a href="javascript:void(0)" class="nav-link d-flex align-items-center px-4 py-2 text-dark"
+                [class.justify-content-between]="layoutService.isSidebarOpen()"
+                [class.justify-content-center]="!layoutService.isSidebarOpen()" [class.active-parent]="item.expanded"
+                (click)="toggle(item)">
+
+                <div class="d-flex align-items-center">
+                    <i [class]="item.icon + ' nav-icon'" [class.me-3]="layoutService.isSidebarOpen()"
+                        style="width: 20px; text-align: center;"></i>
+                    @if (layoutService.isSidebarOpen()) {
+                    <span class="fw-medium fade-in">{{ item.title }}</span>
+                    }
+                </div>
+
+                @if (layoutService.isSidebarOpen()) {
+                <div class="d-flex align-items-center fade-in">
+                    @if (item.badge) {
+                    <span class="badge rounded-pill me-2 {{ item.badge.class }}">{{ item.badge.text }}</span>
+                    }
+                    <i class="fa-solid fa-chevron-right small transition-icon" [class.rotate-90]="item.expanded"></i>
+                </div>
+                }
+            </a>
+
+            <!-- Submenu (Only show if sidebar is open) -->
+            @if (layoutService.isSidebarOpen()) {
+            <div class="submenu bg-light" [class.show]="item.expanded">
+                <ul class="list-unstyled ps-0 mb-0">
+                    @for (sub of item.children; track sub.title) {
+                    <li class="nav-item">
+                        <a [routerLink]="sub.link" routerLinkActive="active-link"
+                            class="nav-link ps-5 py-2 text-secondary d-block">
+                            {{ sub.title }}
+                        </a>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+            } @else {
+            <!-- Single Link Item -->
+            <a [routerLink]="item.link" routerLinkActive="active-parent"
+                class="nav-link d-flex align-items-center px-4 py-2 text-dark"
+                [class.justify-content-between]="layoutService.isSidebarOpen()"
+                [class.justify-content-center]="!layoutService.isSidebarOpen()">
+
+                <div class="d-flex align-items-center">
+                    <i [class]="item.icon + ' nav-icon'" [class.me-3]="layoutService.isSidebarOpen()"
+                        style="width: 20px; text-align: center;"></i>
+                    @if (layoutService.isSidebarOpen()) {
+                    <span class="fw-medium fade-in">{{ item.title }}</span>
+                    }
+                </div>
+
+                @if (layoutService.isSidebarOpen() && item.badge) {
+                <span class="badge rounded-pill {{ item.badge.class }} fade-in">{{ item.badge.text }}</span>
+                }
+            </a>
+            }
+        </li>
+        }
+        }
+    </ul>
+
+    <!-- Server Status Section -->
+    @if (layoutService.isSidebarOpen()) {
+    <div class="px-4 mt-5 mb-5 fade-in">
+        <div class="text-uppercase text-secondary fw-bold mb-3" style="font-size: 0.7rem; letter-spacing: 0.5px;">SERVER
+            STATUS</div>
+
+        <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-medium text-secondary">CPU Usage</span>
+                <span class="badge bg-dark small">15%</span>
+            </div>
+            <div class="progress" style="height: 4px; background-color: #e9ecef;">
+                <div class="progress-bar bg-dark" role="progressbar" style="width: 15%"></div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="small fw-medium text-secondary">Bandwidth</span>
+                <span class="badge small" style="background-color: #8862e0;">75%</span>
+            </div>
+            <div class="progress" style="height: 4px; background-color: #e9ecef;">
+                <div class="progress-bar" role="progressbar" style="width: 75%; background-color: #8862e0;"></div>
+            </div>
+        </div>
+
+        <button class="btn w-100 btn-sm text-white fw-bold mt-2 shadow-sm" style="background-color: #8dc63f;">View
+            Details</button>
+    </div>
+    }
+</div>

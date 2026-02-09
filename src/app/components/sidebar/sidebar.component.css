@@ -1,0 +1,214 @@
+/* Sidebar Container */
+.sidebar-container {
+    background-color: #f7f9fa;
+    /* Light gray background */
+    width: 230px;
+    height: 100vh;
+    border-right: 1px solid #e1e1e1;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Collapsed Mode Overrides */
+.sidebar-container.collapsed {
+    width: 70px;
+}
+
+/* Custom Smooth Scrollbar - Shows reliably on hover */
+.sidebar-container::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+/* Initially hidden */
+.sidebar-container::-webkit-scrollbar-track,
+.sidebar-container::-webkit-scrollbar-thumb {
+    background: transparent !important;
+}
+
+/* Force show on hover with solid colors */
+.sidebar-container:hover::-webkit-scrollbar-track {
+    background-color: #f0f2f5 !important;
+    /* Light gray line always visible on hover */
+    border-radius: 10px;
+}
+
+.sidebar-container:hover::-webkit-scrollbar-thumb {
+    background-color: #25476a !important;
+    /* Theme blue always visible on hover */
+    border-radius: 10px !important;
+    /* Create space between content and scrollbar */
+    border: 2px solid #f7f9fa;
+    background-clip: padding-box;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+    background-color: #1a324b !important;
+}
+
+/* Hide scrollbar arrows/buttons completely */
+.sidebar-container::-webkit-scrollbar-button {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+.sidebar-container::-webkit-scrollbar-corner {
+    display: none !important;
+}
+
+/* Profile Section */
+.profile-section {
+    background-color: #f7f9fa;
+}
+
+.profile-img {
+    border: 3px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation Links */
+.nav-link {
+    color: #4d627b;
+    /* Default text color */
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    min-height: 48px;
+    /* Ensure click target size */
+}
+
+.nav-link:hover {
+    color: #25476a;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+    color: #8c909a;
+    transition: color 0.2s ease;
+}
+
+/* Active Parent State (Like Dashboard in image) */
+.active-parent {
+    background-color: #25476a !important;
+    /* Dark Blue */
+    color: #fff !important;
+    border-left: 3px solid #1a324b;
+}
+
+.active-parent .nav-icon {
+    color: #fff !important;
+}
+
+.active-parent .small {
+    /* arrows */
+    color: #fff !important;
+}
+
+/* Submenu */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #f7f9fa !important;
+    /* Keep same bg as sidebar */
+}
+
+.submenu.show {
+    max-height: 500px;
+    /* Arbitrary large height for animation */
+    transition: max-height 0.3s ease-in;
+}
+
+.submenu .nav-link {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.submenu .nav-link:hover {
+    color: #25476a;
+}
+
+/* Active Submenu Item (Like Dashboard 1 in image) */
+.active-link {
+    color: #25476a !important;
+    font-weight: 600;
+}
+
+/* Badge */
+.badge.bg-warning {
+    background-color: #ffb822 !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+/* Rotate Chevron */
+.transition-icon {
+    transition: transform 0.2s ease;
+}
+
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+/* Fade In Animation for Text */
+.fade-in {
+    animation: fadeIn 0.2s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Profile Dropdown Custom Styling */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.profile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #f0f2f5;
+    /* Slightly darker gray for depth */
+}
+
+.profile-menu.show {
+    max-height: 300px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;
+}
+
+.profile-menu-item a {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    border-radius: 6px;
+    text-align: left;
+}
+
+.profile-menu-item a:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.profile-menu-item i {
+    width: 20px;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.transition-icon {
+    transition: transform 0.3s ease;
+}

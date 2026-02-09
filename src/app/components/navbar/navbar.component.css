@@ -1,0 +1,28 @@
+.bg-dark-blue {
+    background-color: #25476a;
+    /* Dark blue specific to request */
+}
+
+/* Custom placeholder color */
+.placeholder-white-50::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Remove default focus outline for search */
+.form-control:focus {
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-link {
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #fff !important;
+}
+
+.navbar-brand {
+    font-family: sans-serif;
+    /* Setup a clean font or import one if needed */
+}
