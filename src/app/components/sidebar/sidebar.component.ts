@@ -176,7 +176,17 @@ export class SidebarComponent {
 
   toggle(item: MenuItem) {
     if (item.children) {
-      item.expanded = !item.expanded;
+      const isCurrentlyExpanded = item.expanded;
+
+      // Close all other items
+      this.menuItems.forEach(m => {
+        if (m.children) {
+          m.expanded = false;
+        }
+      });
+
+      // Set the clicked item to its new state
+      item.expanded = !isCurrentlyExpanded;
     }
   }
 }

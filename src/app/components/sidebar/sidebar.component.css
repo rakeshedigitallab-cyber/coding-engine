@@ -80,6 +80,7 @@
     border-left: 3px solid transparent;
     min-height: 48px;
     /* Ensure click target size */
+    padding-right: 2rem !important;
 }
 
 .nav-link:hover {

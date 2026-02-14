@@ -57,7 +57,7 @@
     border-radius: 20px;
     border: 1px solid #ced4da;
     width: 250px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 .btn-outline-primary {
@@ -77,7 +77,7 @@
 }
 
 .custom-table {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     border: 1px solid #eee;
 }
 
