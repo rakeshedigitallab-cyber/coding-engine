@@ -2,11 +2,13 @@
     <div class="container-fluid p-0">
 
         <!-- Branding & Toggle -->
-        <div class="d-flex align-items-center justify-content-between me-2" style="width: 214px;">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <div class="d-flex align-items-center justify-content-between me-2"
+            [style.width]="layoutService.isMobile() ? 'auto' : '214px'">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" *ngIf="!layoutService.isMobile()">
                 <i class="fa-solid fa-leaf text-success fs-4"></i>
                 <span class="fw-bold text-white fs-5">CodingEngine</span>
             </a>
+            <div *ngIf="layoutService.isMobile()"></div> <!-- Spacer for flex justificatoin -->
             <button class="btn btn-link text-white-50 p-0" type="button" (click)="toggle()">
                 <i class="fa-solid fa-bars fs-5"></i>
             </button>

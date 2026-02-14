@@ -1,0 +1,216 @@
+<div class="header-section">
+    <div id="page-head" class="px-3 pt-4 pb-5">
+        <div id="page-title">
+            <h1 class="page-header text-white">Schedule Appointment</h1>
+        </div>
+        <ul class="breadcrumb-custom">
+            <li><a [routerLink]="['/']"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="javascript:void(0)">Master</a></li>
+            <li class="active">Appointment</li>
+        </ul>
+    </div>
+</div>
+
+<div id="content-container" class="px-3">
+    <div class="col-lg-12 main-card-container border rounded shadow-sm p-0 bg-white">
+        <div class="tabs-container">
+            <nav class="nav-tabs-custom">
+                <button class="nav-link" [class.active]="activeTab === 'APPOINTMENT'"
+                    (click)="activeTab = 'APPOINTMENT'">APPOINTMENT</button>
+                <button class="nav-link" [class.active]="activeTab === 'BILLING'"
+                    (click)="activeTab = 'BILLING'">BILLING</button>
+                <button class="nav-link" [class.active]="activeTab === 'ICDCODE10'"
+                    (click)="activeTab = 'ICDCODE10'">ICDCODE10</button>
+                <button class="nav-link" [class.active]="activeTab === 'REVISIONS'"
+                    (click)="activeTab = 'REVISIONS'">REVISIONS</button>
+                <button class="nav-link" [class.active]="activeTab === 'ELIGIBILITY'"
+                    (click)="activeTab = 'ELIGIBILITY'">ELIGIBILITY</button>
+                <button class="nav-link" [class.active]="activeTab === 'FLAGS'"
+                    (click)="activeTab = 'FLAGS'">FLAGS</button>
+                <button class="nav-link" [class.active]="activeTab === 'CUSTOM FIELDS'"
+                    (click)="activeTab = 'CUSTOM FIELDS'">CUSTOM FIELDS</button>
+                <button class="nav-link" [class.active]="activeTab === 'PHONE LOG'"
+                    (click)="activeTab = 'PHONE LOG'">PHONE LOG</button>
+                <button class="nav-link" [class.active]="activeTab === 'MD HELPER'" (click)="activeTab = 'MD HELPER'">MD
+                    HELPER</button>
+            </nav>
+        </div>
+
+        <!-- Form Content Section -->
+        <div class="form-content-area" *ngIf="activeTab === 'APPOINTMENT'">
+            <h4 class="mb-5 fw-semibold" style="color: #25476a;">Manage appointment details</h4>
+
+            <!-- Type Selector Row -->
+            <div class="type-header">
+                <span class="type-label">Type:</span>
+                <div class="d-flex flex-wrap gap-1">
+                    <div class="form-check form-check-inline" *ngFor="let type of appointmentTypes">
+                        <input class="form-check-input" type="checkbox" [id]="'type-' + type"
+                            (change)="toggleContactType(type, $event)">
+                        <label class="form-check-label" [for]="'type-' + type">{{ type }}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-lg-6">
+                    <div class="inline-group">
+                        <label for="patientId">Patient ID:</label>
+                        <input type="text" id="patientId" [(ngModel)]="patientId" (ngModelChange)="onPatientIdChange()"
+                            class="form-control" placeholder="Enter Patient ID">
+                        <div class="button-add-on">
+                            <button class="btn btn-success" type="button"><i class="fa-solid fa-plus"></i></button>
+                            <button class="btn btn-warning" type="button"><i
+                                    class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="inline-group" style="height: auto;">
+                        <label for="reason">Reason:</label>
+                        <textarea id="reason" [(ngModel)]="formData.reason" class="form-control" rows="2"
+                            placeholder="Reason for appointment"></textarea>
+                    </div>
+
+                    <div class="inline-group">
+                        <label for="date">Scheduled Date:</label>
+                        <input type="date" id="date" [(ngModel)]="formData.appointmentDate" (change)="onDateChange()"
+                            class="form-control">
+                        <label style="flex: 0 0 60px; border-left: 1px solid #ddd; background: #f9f9f9;">Time:</label>
+                        <select [(ngModel)]="formData.time" class="form-select">
+                            <option value="">--:--</option>
+                            <option *ngFor="let t of timeOptions" [value]="t" [disabled]="isTimeDisabled(t)">{{ t }}
+                            </option>
+                        </select>
+                        <select [(ngModel)]="formData.ampm" class="form-select" style="max-width: 80px;">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-group">
+                        <label for="duration">Duration:</label>
+                        <input type="number" id="duration" [(ngModel)]="formData.duration" class="form-control"
+                            style="max-width: 100px;">
+                        <div class="d-flex align-items-center bg-white px-3 border border-start-0 text-muted small">
+                            minutes
+                        </div>
+                    </div>
+
+                    <div class="inline-group" style="height: auto;">
+                        <label for="notes">Notes:</label>
+                        <textarea id="notes" [(ngModel)]="formData.notes" class="form-control" rows="2"
+                            placeholder="Quick notes"></textarea>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-lg-6">
+                    <div class="inline-group">
+                        <label>Name:</label>
+                        <input type="text" [value]="patientData.firstName" class="form-control bg-light" readonly
+                            placeholder="Fetched automatically">
+                        <div class="button-add-on">
+                            <button class="btn btn-success" type="button"><i class="fa-solid fa-plus"></i></button>
+                            <button class="btn btn-warning" type="button"><i
+                                    class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="inline-group">
+                        <label>Mob No:</label>
+                        <input type="text" [value]="patientData.cellPhone" class="form-control bg-light" readonly
+                            placeholder="Fetched automatically">
+                    </div>
+
+                    <div class="inline-group">
+                        <label for="department">Doctor Department:</label>
+                        <select id="department" [(ngModel)]="formData.department" (change)="onDepartmentChange()"
+                            class="form-select">
+                            <option value="">Choose Doctor Category</option>
+                            <option value="Neurologist">Neurologist</option>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Oncologist">Oncologist</option>
+                            <option value="Orthopedic">Orthopedic</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-group" style="margin-top: 40px;">
+                        <label for="doctor">Doctor Name:</label>
+                        <select id="doctor" [(ngModel)]="formData.doctorName" class="form-select"
+                            [disabled]="!formData.department">
+                            <option value="">Select a category first</option>
+                            <option *ngFor="let doc of filteredDoctors" [value]="doc.name">{{ doc.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="inline-group">
+                        <label for="status">Status:</label>
+                        <select id="status" [(ngModel)]="formData.status" class="form-select">
+                            <option value="Status 1">Status 1</option>
+                            <option value="Status 2">Status 2</option>
+                            <option value="Status 3">Status 3</option>
+                            <option value="Status 4">Status 4</option>
+                        </select>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="text-end mt-4">
+                        <a href="javascript:void(0)" class="btn-link-custom me-3 text-primary text-decoration-none">View
+                            Clinical Note</a>
+                        <a href="javascript:void(0)" class="btn-link-custom text-primary text-decoration-none">View All
+                            Appointments</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reminders Section -->
+            <div class="reminders-section shadow-sm">
+                <div class="d-flex flex-wrap gap-4 mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="recurring" [(ngModel)]="formData.recurring">
+                        <label class="form-check-label" for="recurring">Recurring Appointment</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="followup" [(ngModel)]="formData.followup">
+                        <label class="form-check-label" for="followup">Arrange a Follow-up Reminder</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="viewActive"
+                            [(ngModel)]="formData.showReminders">
+                        <label class="form-check-label" for="viewActive">View Active Reminders :</label>
+                    </div>
+                </div>
+
+                <div class="row align-items-center bg-white p-3 border rounded g-3">
+                    <div class="col-md-auto">
+                        <span class="small fw-bold text-muted">Choose a Reminder Profile:</span>
+                    </div>
+                    <div class="col-md-5">
+                        <select class="form-select form-select-sm">
+                            <option value="">-- Select --</option>
+                        </select>
+                    </div>
+                    <div class="col text-end">
+                        <button class="btn btn-success btn-sm"><i class="fa-solid fa-plus me-1"></i> New
+                            Reminder</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="footer-btn-container">
+                <button class="btn btn-theme px-4" (click)="createAppointment()">Save & Close</button>
+                <button class="btn btn-theme px-4" (click)="createAppointment()">Save</button>
+                <button class="btn btn-danger px-4" style="font-weight: 600;">Delete</button>
+                <button class="btn btn-secondary px-4" style="font-weight: 600;" (click)="cancel()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Billing Tab Content -->
+        <div class="form-content-area" *ngIf="activeTab === 'BILLING'">
+            <h4 class="mb-5 fw-semibold" style="color: #25476a;">Manage billing details</h4>
+            <app-appoint-billing></app-appoint-billing>
+        </div>
+    </div>
+</div>

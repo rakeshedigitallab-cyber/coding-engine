@@ -1,0 +1,203 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header-section {
+    background-color: #25476a;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+#page-head {
+    margin-bottom: 0;
+    padding-bottom: 5rem !important;
+}
+
+.page-header {
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+    font-weight: 500;
+}
+
+.breadcrumb-custom {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.breadcrumb-custom li a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-custom li a:hover {
+    color: #fff !important;
+}
+
+.breadcrumb-custom li.active {
+    color: #fff;
+}
+
+.breadcrumb-custom li:not(:last-child)::after {
+    content: '>';
+    margin-left: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 1.5rem;
+}
+
+.main-card-container {
+    margin-top: -45px;
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background-color: #fff;
+}
+
+/* Appointment Specific UI */
+.tabs-container {
+    background-color: #fcfcfc;
+    border-bottom: 1px solid #eee;
+}
+
+.nav-tabs-custom {
+    border-bottom: none;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem;
+}
+
+.nav-tabs-custom .nav-link {
+    border: none;
+    color: #888;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 1rem 1.2rem;
+    text-transform: uppercase;
+    background: none;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs-custom .nav-link.active {
+    color: #25476a;
+    border-bottom-color: #25476a;
+}
+
+.form-content-area {
+    padding: 1.5rem;
+}
+
+.type-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.type-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.inline-group {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: stretch;
+    height: 38px;
+}
+
+.inline-group label {
+    flex: 0 0 160px;
+    background-color: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-right: none;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.inline-group .form-control,
+.inline-group .form-select {
+    flex: 1;
+    border-radius: 0;
+    border-color: #e5e5e5;
+    font-size: 0.85rem;
+    height: 38px;
+    box-shadow: none;
+}
+
+.inline-group .form-control:focus,
+.inline-group .form-select:focus {
+    border-color: #25476a;
+    z-index: 10;
+}
+
+.button-add-on {
+    display: flex;
+    gap: 5px;
+}
+
+.button-add-on .btn {
+    border-radius: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reminders-section {
+    background-color: #fcfcfc;
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border-radius: 4px;
+}
+
+.footer-btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.btn-theme {
+    background-color: #25476a;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 0.6rem 1.5rem;
+}
+
+.btn-link-custom {
+    color: #25476a;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+}

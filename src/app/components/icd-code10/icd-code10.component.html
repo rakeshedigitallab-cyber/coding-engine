@@ -1,0 +1,97 @@
+<div class="d-flex flex-column h-100">
+    <!-- Patient Info Fields -->
+    <div class="row g-3 mb-4 flex-shrink-0">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small text-muted">Patient ID</label>
+            <input type="text" class="form-control form-control-sm shadow-none border-blue" placeholder="Enter ID">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small text-muted">Patient Name</label>
+            <input type="text" class="form-control form-control-sm shadow-none border-blue" placeholder="Enter Name">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small text-muted">Age</label>
+            <input type="text" class="form-control form-control-sm shadow-none border-blue" value="0.00">
+        </div>
+    </div>
+
+    <!-- ICD Code Selection Section -->
+    <div class="border rounded shadow-sm overflow-hidden mb-0 d-flex flex-column flex-grow-1">
+        <!-- Header -->
+        <div class="bg-dark-blue p-2 d-flex align-items-center justify-content-between flex-shrink-0">
+            <span class="text-white fw-bold ps-2">ICD-10 Codes</span>
+            <div class="position-relative" style="width: 350px;">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control border-secondary shadow-none"
+                        placeholder="Find Diagnosis codes" [(ngModel)]="search" (focus)="showDropdown = true"
+                        (blur)="closeDropdown()">
+                    <span class="input-group-text bg-white">
+                        <i class="fa-solid fa-chevron-down small text-secondary"></i>
+                    </span>
+                </div>
+
+                <!-- Search Results Dropdown -->
+                <div *ngIf="showDropdown && search"
+                    class="position-absolute w-100 bg-white border rounded shadow-lg mt-1"
+                    style="z-index: 1000; max-height: 250px; overflow-y: auto;">
+                    <div *ngFor="let item of filtered" (mousedown)="handleSelect(item)"
+                        class="p-2 border-bottom cursor-pointer hover-bg-light small d-flex justify-content-between align-items-center text-primary">
+                        <span class="fw-bold">{{ item.icdCode }}</span>
+                        <span class="text-muted text-truncate ps-3">{{ item.codeDescription }}</span>
+                    </div>
+                    <div *ngIf="filtered.length === 0" class="p-3 text-center text-muted small">
+                        No matches found.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="table-responsive flex-grow-1 overflow-auto">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="bg-light text-uppercase sticky-top" style="z-index: 5;">
+                    <tr>
+                        <th style="width: 50px;" class="ps-3 py-3 border-0">#</th>
+                        <th style="width: 120px;" class="py-3 border-0">Code</th>
+                        <th class="py-3 border-0">Description</th>
+                        <th style="width: 150px;" class="py-3 border-0">Information</th>
+                        <th style="width: 220px;" class="py-3 border-0">Billable Status</th>
+                        <th style="width: 80px;" class="text-center py-3 border-0 pe-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of selectedRows; let i = index">
+                        <td class="ps-3 border-0">{{ i + 1 }}</td>
+                        <td class="fw-bold text-dark border-0">{{ item.icdCode }}</td>
+                        <td class="border-0">{{ item.codeDescription }}</td>
+                        <td class="border-0">
+                            <span class="badge bg-light text-dark border fw-normal" *ngIf="item.unspecifiedInfo">
+                                {{ item.unspecifiedInfo }}
+                            </span>
+                        </td>
+                        <td class="border-0">
+                            <span [ngClass]="item.billableInfo === 'Billable Code' ? 'text-success' : 'text-danger'"
+                                class="fw-semibold">
+                                {{ item.billableInfo }}
+                            </span>
+                        </td>
+                        <td class="text-center border-0 pe-3">
+                            <button class="btn btn-link text-danger p-0" (click)="removeIcd(i)">
+                                <i class="fa-solid fa-times-circle fs-5"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="selectedRows.length === 0">
+                        <td colspan="6" class="text-center py-5 text-muted border-0">
+                            <div class="d-flex flex-column align-items-center justify-content-center"
+                                style="min-height: 200px;">
+                                <i class="fa-solid fa-info-circle fs-4 mb-2 opacity-50"></i>
+                                <span>Please search and select ICD-10 codes to add them to the bill.</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

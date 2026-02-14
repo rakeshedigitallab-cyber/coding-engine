@@ -15,34 +15,37 @@
     width: 70px;
 }
 
-/* Custom Smooth Scrollbar - Shows reliably on hover */
+/* Custom Smooth Scrollbar - Shows on sidebar hover */
 .sidebar-container::-webkit-scrollbar {
-    width: 6px !important;
+    width: 8px !important;
 }
 
-/* Initially hidden */
+/* Default state: fully transparent */
 .sidebar-container::-webkit-scrollbar-track,
 .sidebar-container::-webkit-scrollbar-thumb {
     background: transparent !important;
+    border-left: 4px solid transparent;
+    /* Maintain hit-area width */
 }
 
-/* Force show on hover with solid colors */
+/* Hover state: reveal with theme colors and solid gap */
 .sidebar-container:hover::-webkit-scrollbar-track {
     background-color: #f0f2f5 !important;
-    /* Light gray line always visible on hover */
-    border-radius: 10px;
+    background-clip: padding-box;
+    border-left: 4px solid #f7f9fa;
+    /* The gap from content */
+    border-radius: 10px !important;
 }
 
 .sidebar-container:hover::-webkit-scrollbar-thumb {
     background-color: #25476a !important;
-    /* Theme blue always visible on hover */
-    border-radius: 10px !important;
-    /* Create space between content and scrollbar */
-    border: 2px solid #f7f9fa;
     background-clip: padding-box;
+    border-left: 4px solid #f7f9fa;
+    /* The gap from content */
+    border-radius: 10px !important;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb:hover {
+.sidebar-container:hover::-webkit-scrollbar-thumb:hover {
     background-color: #1a324b !important;
 }
 

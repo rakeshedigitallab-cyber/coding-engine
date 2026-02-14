@@ -1,0 +1,59 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.bg-dark-blue {
+    background-color: #25476a !important;
+}
+
+.border-blue {
+    border-color: #25476a !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.hover-bg-light:hover {
+    background-color: #f8f9fa;
+}
+
+.form-control-sm {
+    font-size: 0.825rem;
+}
+
+.table thead th {
+    font-weight: 600;
+    color: #25476a;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody td {
+    color: #4d627b;
+}
+
+.input-group-text {
+    border-color: #ced4da;
+}
+
+/* Custom scrollbar for dropdown */
+.position-absolute::-webkit-scrollbar {
+    width: 6px;
+}
+
+.position-absolute::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.position-absolute::-webkit-scrollbar-thumb {
+    background: #25476a;
+    border-radius: 10px;
+}
+
+.position-absolute::-webkit-scrollbar-thumb:hover {
+    background: #1a324b;
+}

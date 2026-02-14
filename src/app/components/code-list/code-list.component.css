@@ -1,22 +1,53 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
 .header-section {
     background-color: #25476a;
-    /* Dark blue background matching navbar */
     width: 100%;
+    flex-shrink: 0;
 }
 
 #content-container {
-    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 1.5rem;
 }
 
 .main-card-container {
     margin-top: -45px;
-    /* Negative margin to overlap the blue section */
     position: relative;
     z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 #page-head {
     margin-bottom: 0;
+    padding-bottom: 5rem !important;
+    /* Increased height for the blue background */
 }
 
 .page-header {
@@ -76,6 +107,12 @@
 }
 
 /* Table Styling */
+.table-responsive {
+    flex: 1;
+    overflow: auto;
+    width: 100%;
+}
+
 .table thead th {
     background-color: #f8f9fa;
     color: #25476a;
@@ -132,6 +169,8 @@
 .scrollbar-custom {
     margin-bottom: 1rem;
     /* Space between table and pagination */
+    margin-top: 1.5rem;
+    /* Gap between filter area and table top */
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {

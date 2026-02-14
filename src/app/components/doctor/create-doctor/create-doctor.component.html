@@ -1,0 +1,170 @@
+<div class="header-section">
+    <div id="page-head" class="px-3 pt-4 pb-5">
+        <div id="page-title">
+            <h1 class="page-header text-white">Add Doctor</h1>
+        </div>
+        <ul class="breadcrumb-custom">
+            <li><a [routerLink]="['/']"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="javascript:void(0)">Master</a></li>
+            <li class="active">Doctor</li>
+        </ul>
+    </div>
+</div>
+
+<div id="content-container" class="px-3">
+    <div class="col-lg-12 main-card-container">
+        <form (ngSubmit)="handleSubmit()" #doctorForm="ngForm">
+            <div class="row">
+
+                <!-- Left Side: Basic Information -->
+                <div class="col-lg-7">
+                    <div
+                        class="card shadow-sm border-0 border-top border-4 border-primary rounded-3 p-4 bg-white h-100">
+                        <h5 class="fw-bold mb-4" style="color: #25476a;">Basic Information</h5>
+                        <hr class="mb-4">
+
+                        <div class="row g-3">
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Doctor First Name</label>
+                                <input type="text" class="form-control" placeholder="Enter First Name" name="firstName"
+                                    [(ngModel)]="formData.firstName" required>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Doctor Last Name</label>
+                                <input type="text" class="form-control" placeholder="Enter Last Name" name="lastName"
+                                    [(ngModel)]="formData.lastName" required>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Email Address</label>
+                                <input type="email" class="form-control" placeholder="Enter Email" name="email"
+                                    [(ngModel)]="formData.email" required>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Phone Number</label>
+                                <input type="text" class="form-control" placeholder="Enter Number" name="phoneNumber"
+                                    [(ngModel)]="formData.phoneNumber">
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Birth Date</label>
+                                <input type="date" class="form-control" name="birthDate"
+                                    [(ngModel)]="formData.birthDate">
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Gender</label>
+                                <select class="form-select" name="gender" [(ngModel)]="formData.gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Education</label>
+                                <input type="text" class="form-control" placeholder="Enter Education" name="education"
+                                    [(ngModel)]="formData.education" required>
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label fw-semibold small text-muted">Department</label>
+                                <select class="form-select" name="department" [(ngModel)]="formData.department"
+                                    required>
+                                    <option value="">Select Department</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Gastroenterology">Gastroenterology</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                    <option value="Pediatrics">Pediatrics</option>
+                                    <option value="General Surgery">General Surgery</option>
+                                    <option value="Dentistry">Dentistry</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-start">
+                                <label class="form-label fw-semibold small text-muted">Doctor Address</label>
+                                <textarea class="form-control" rows="2" placeholder="Full Address" name="doctorAddress"
+                                    [(ngModel)]="formData.doctorAddress"></textarea>
+                            </div>
+                            <div class="col-12 text-start">
+                                <label class="form-label fw-semibold small text-muted">About Experience</label>
+                                <textarea class="form-control" rows="4" placeholder="Write short line about doctor"
+                                    name="aboutDoctor" [(ngModel)]="formData.aboutDoctor"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Upload and Availability -->
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column gap-4 h-100">
+
+                        <!-- Profile Photo -->
+                        <div class="card shadow-sm border-0 border-top border-4 border-success rounded-3 p-4 bg-white">
+                            <h5 class="fw-bold mb-4" style="color: #25476a;">Upload Profile Photo</h5>
+                            <hr class="mb-4">
+
+                            <div class="upload-dropzone" (click)="fileInput.click()">
+                                <i class="fa-solid fa-cloud-arrow-up fa-3x mb-3 text-success"></i>
+                                <p class="fw-semibold text-muted mb-1">Click to upload or drag & drop</p>
+                                <p class="small text-muted" *ngIf="selectedFile">{{ selectedFile.name }}</p>
+                                <input type="file" #fileInput (change)="handleFileChange($event)" style="display: none;"
+                                    accept="image/*">
+                            </div>
+                        </div>
+
+                        <!-- Availability -->
+                        <div
+                            class="card shadow-sm border-0 border-top border-4 border-warning rounded-3 p-4 bg-white flex-grow-1">
+                            <h5 class="fw-bold mb-4" style="color: #25476a;">Doctor Availability</h5>
+                            <hr class="mb-4">
+
+                            <div class="mb-4 text-start">
+                                <label class="form-label d-block fw-bold small text-muted text-uppercase mb-3">Available
+                                    Days:</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check" *ngFor="let day of days">
+                                        <input class="form-check-input" type="checkbox" [id]="'day-' + day"
+                                            [checked]="availableDays.includes(day)" (change)="handleDayToggle(day)">
+                                        <label class="form-check-label small" [for]="'day-' + day">{{ day }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-6 text-start">
+                                    <label class="form-label fw-semibold small text-muted">From Time:</label>
+                                    <input type="time" class="form-control" name="fromTime"
+                                        [(ngModel)]="timeRange.fromTime">
+                                </div>
+                                <div class="col-6 text-start">
+                                    <label class="form-label fw-semibold small text-muted">To Time:</label>
+                                    <input type="time" class="form-control" name="toTime"
+                                        [(ngModel)]="timeRange.toTime">
+                                </div>
+                            </div>
+
+                            <div class="mb-4 text-start">
+                                <label class="form-label fw-semibold small text-muted">Available Date Range:</label>
+                                <div class="d-flex gap-2">
+                                    <input type="date" class="form-control" name="startDate" [(ngModel)]="startDate">
+                                    <span class="align-self-center">to</span>
+                                    <input type="date" class="form-control" name="endDate" [(ngModel)]="endDate">
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-2 mt-auto pt-3">
+                                <button type="button" class="btn btn-danger px-4 fw-bold"
+                                    (click)="cancel()">Cancel</button>
+                                <button type="submit" class="btn btn-primary px-4 fw-bold"
+                                    [disabled]="loading || !doctorForm.valid">
+                                    <span class="spinner-border spinner-border-sm me-2" *ngIf="loading"></span>
+                                    {{ loading ? 'Adding...' : 'Add Doctor' }}
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>

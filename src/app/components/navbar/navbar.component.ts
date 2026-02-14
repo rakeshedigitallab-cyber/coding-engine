@@ -10,7 +10,7 @@ import { LayoutService } from '../../services/layout.service';
   styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
-  constructor(private layoutService: LayoutService) { }
+  constructor(public layoutService: LayoutService) { }
 
   toggle() {
     this.layoutService.toggleSidebar();

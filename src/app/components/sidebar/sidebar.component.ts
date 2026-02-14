@@ -33,25 +33,25 @@ export class SidebarComponent {
       icon: 'fa-solid fa-house',
       expanded: true,
       children: [
-        { title: 'Dashboard 1', link: '/dashboard' },
-        { title: 'Dashboard 2', link: '/dashboard/v2' }
+        { title: 'Dashboard 1', link: '/' },
+        { title: 'Dashboard 2', link: '/v2' }
       ]
     },
     {
       title: 'Code Engine',
       icon: 'fa-solid fa-table-columns',
       children: [
-        { title: 'Code List', link: '/dashboard/codes' },
-        { title: 'Billing', link: '/dashboard/billing' }
+        { title: 'Code List', link: '/codes' },
+        { title: 'Billing', link: '/billing' }
       ]
     },
     {
       title: 'Master',
       icon: 'fa-solid fa-layer-group',
       children: [
-        { title: 'Patient', link: '/dashboard/patient' },
-        { title: 'Appointment', link: '/dashboard/appointment' },
-        { title: 'Doctor', link: '/dashboard/doctor' }
+        { title: 'Patient', link: '/patients' },
+        { title: 'Appointment', link: '/appointment' },
+        { title: 'Doctor', link: '/doctor' }
       ]
     },
     {

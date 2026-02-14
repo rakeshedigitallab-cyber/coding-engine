@@ -1,0 +1,281 @@
+<div class="billing-container">
+    <!-- Top Form Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Patient ID</label>
+                <input type="text" class="form-control" [(ngModel)]="patientId">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Billing Status</label>
+                <select class="form-select" [(ngModel)]="billingStatus">
+                    <option>Select Status</option>
+                    <option>Submitted</option>
+                    <option>Pending</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Patient Payment</label>
+                <input type="text" class="form-control" [(ngModel)]="patientPayment">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Employment</label>
+                <select class="form-select" [(ngModel)]="employment">
+                    <option>No</option>
+                    <option>Yes</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Payment Date</label>
+                <input type="date" class="form-control" [(ngModel)]="postedDate">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Payment Profile</label>
+                <select class="form-select" [(ngModel)]="paymentProfile">
+                    <option>Cash</option>
+                    <option>Insurance</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Payment Notes</label>
+                <input type="text" class="form-control" [(ngModel)]="paymentNotes">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="inline-group">
+                <label>Auto Accident</label>
+                <select class="form-select" [(ngModel)]="autoAccident">
+                    <option>No</option>
+                    <option>Yes</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Sections -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <!-- ICD-9 Codes -->
+            <div class="code-box">
+                <div class="code-box-header">
+                    <span class="title">ICD-9 Codes</span>
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find Diagnosis codes" [(ngModel)]="searchIcd"
+                            (focus)="showDropdownIcd = true" (blur)="showDropdownIcd = false">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="dropdown-custom" *ngIf="showDropdownIcd && searchIcd">
+                            <div class="dropdown-item-custom" *ngFor="let item of getFiltered(searchIcd)"
+                                (mousedown)="handleSelect(item, 'icd')">
+                                <span class="code">{{item.code}}</span>
+                                <span class="description">{{item.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-head">
+                    <div class="col-num">#</div>
+                    <div class="col-code">Code</div>
+                    <div class="col-desc">Description</div>
+                </div>
+                <div class="table-row" *ngFor="let item of selectedIcd; let i = index">
+                    <div class="col-num">{{i + 1}}</div>
+                    <div class="col-code">{{item.code}}</div>
+                    <div class="col-desc">{{item.description}}</div>
+                    <button class="btn-remove" (click)="removeCode(i, selectedIcd)">×</button>
+                </div>
+            </div>
+
+            <!-- NDC Coded -->
+            <div class="code-box mt-4">
+                <div class="code-box-header">
+                    <span class="title">NDC Coded</span>
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find NDC Codes" [(ngModel)]="searchNdc"
+                            (focus)="showDropdownNdc = true" (blur)="showDropdownNdc = false">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="dropdown-custom" *ngIf="showDropdownNdc && searchNdc">
+                            <div class="dropdown-item-custom" *ngFor="let item of getFiltered(searchNdc)"
+                                (mousedown)="handleSelect(item, 'ndc')">
+                                <span class="code">{{item.code}}</span>
+                                <span class="description">{{item.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-head">
+                    <div style="width: 25%">NDC Code</div>
+                    <div style="width: 25%">Quantity</div>
+                    <div style="width: 25%">Units</div>
+                    <div style="width: 25%">Line Item</div>
+                </div>
+                <div class="table-row flex-nowrap" *ngFor="let item of selectedNdc; let i = index">
+                    <div style="width: 25%">{{item.code}}</div>
+                    <div style="width: 25%"><input type="number" class="form-control form-control-sm"
+                            [(ngModel)]="item.quantity"></div>
+                    <div style="width: 25%">
+                        <select class="form-select form-select-sm" [(ngModel)]="item.unit">
+                            <option value="">Select</option>
+                            <option value="UN">UN</option>
+                            <option value="ML">ML</option>
+                        </select>
+                    </div>
+                    <div style="width: 25%"><select class="form-select form-select-sm" [(ngModel)]="item.lineItem">
+                            <option value="">---</option>
+                        </select></div>
+                    <button class="btn-remove" (click)="removeCode(i, selectedNdc)">×</button>
+                </div>
+            </div>
+
+            <!-- Custom Codes -->
+            <div class="code-box mt-4">
+                <div class="code-box-header">
+                    <span class="title">Custom Codes</span>
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find Custom codes" [(ngModel)]="searchCus"
+                            (focus)="showDropdownCus = true" (blur)="showDropdownCus = false">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="dropdown-custom" *ngIf="showDropdownCus && searchCus">
+                            <div class="dropdown-item-custom" *ngFor="let item of getFiltered(searchCus)"
+                                (mousedown)="handleSelect(item, 'cus')">
+                                <span class="code">{{item.code}}</span>
+                                <span class="description">{{item.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- (Simplified for brevity, similar to CPT) -->
+                <div class="table-head">
+                    <div style="width: 20%">Code</div>
+                    <div style="width: 60%">Description</div>
+                    <div style="width: 20%">Price</div>
+                </div>
+                <div class="table-row-complex" *ngFor="let item of selectedCus; let i = index">
+                    <div class="d-flex align-items-center w-100">
+                        <div style="width: 20%">{{item.code}}</div>
+                        <div style="width: 60%">{{item.description}}</div>
+                        <div style="width: 20%"><input type="text" class="form-control form-control-sm"
+                                [(ngModel)]="item.price"></div>
+                        <button class="btn-remove" (click)="removeCode(i, selectedCus)">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <!-- CPT Codes -->
+            <div class="code-box">
+                <div class="code-box-header">
+                    <span class="title">CPT Codes</span>
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find CPT codes" [(ngModel)]="searchCpt"
+                            (focus)="showDropdownCpt = true" (blur)="showDropdownCpt = false">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="dropdown-custom" *ngIf="showDropdownCpt && searchCpt">
+                            <div class="dropdown-item-custom" *ngFor="let item of getFiltered(searchCpt)"
+                                (mousedown)="handleSelect(item, 'cpt')">
+                                <span class="code">{{item.code}}</span>
+                                <span class="description">{{item.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-head">
+                    <div style="width: 20%">Code</div>
+                    <div style="width: 60%">Description</div>
+                    <div style="width: 20%">Price</div>
+                </div>
+                <div class="table-row-complex" *ngFor="let item of selectedCpt; let i = index">
+                    <div class="d-flex align-items-center w-100">
+                        <div style="width: 20%">{{item.code}}</div>
+                        <div style="width: 60%">{{item.description}}</div>
+                        <div style="width: 20%"><input type="text" class="form-control form-control-sm"
+                                [(ngModel)]="item.price"></div>
+                        <button class="btn-remove" (click)="removeCode(i, selectedCpt)">×</button>
+                    </div>
+                    <div class="details-area">
+                        <div class="detail-row">
+                            <strong>Modifiers:</strong>
+                            <input type="text" class="sm-input" placeholder="+">
+                            <input type="text" class="sm-input" placeholder="+">
+                        </div>
+                        <div class="detail-row">
+                            <strong>Quantity/Minutes:</strong>
+                            <input type="number" class="sm-input" style="width: 60px" value="1">
+                        </div>
+                        <div class="detail-row">
+                            <strong>Diagnosis Pointers:</strong>
+                            <input type="text" class="sm-input" style="width: 100px" value="1:0:0:0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HCPCS Codes -->
+            <div class="code-box mt-4">
+                <div class="code-box-header">
+                    <span class="title">HCPCS Codes</span>
+                    <div class="search-wrapper">
+                        <input type="text" placeholder="Find HCPCS codes" [(ngModel)]="searchHcp"
+                            (focus)="showDropdownHcp = true" (blur)="showDropdownHcp = false">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="dropdown-custom" *ngIf="showDropdownHcp && searchHcp">
+                            <div class="dropdown-item-custom" *ngFor="let item of getFiltered(searchHcp)"
+                                (mousedown)="handleSelect(item, 'hcp')">
+                                <span class="code">{{item.code}}</span>
+                                <span class="description">{{item.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-head">
+                    <div style="width: 20%">Code</div>
+                    <div style="width: 60%">Description</div>
+                    <div style="width: 20%">Price</div>
+                </div>
+                <div class="table-row-complex" *ngFor="let item of selectedHcp; let i = index">
+                    <div class="d-flex align-items-center w-100">
+                        <div style="width: 20%">{{item.code}}</div>
+                        <div style="width: 60%">{{item.description}}</div>
+                        <div style="width: 20%"><input type="text" class="form-control form-control-sm"
+                                [(ngModel)]="item.price"></div>
+                        <button class="btn-remove" (click)="removeCode(i, selectedHcp)">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Section -->
+    <div class="note-section mt-5 border rounded p-4 bg-light">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="includeNote">
+            <label>Include note in EDI Billing:</label>
+            <input type="text" class="form-control" placeholder="Custom NTE EDI Billing Note" [(ngModel)]="note"
+                [disabled]="!includeNote">
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-center gap-2">
+            <button class="btn btn-primary px-4">Save & Close</button>
+            <button class="btn btn-primary px-4">Save</button>
+            <button class="btn btn-danger px-4">Delete</button>
+            <button class="btn btn-secondary px-4">Cancel</button>
+        </div>
+    </div>
+</div>
