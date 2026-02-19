@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { DoctorService } from '../../../services/doctor.service';
+import { API_BASE } from '../../../api-config';
 
 @Component({
   selector: 'app-doctor-list',
@@ -18,6 +20,7 @@ export class DoctorListComponent implements OnInit {
   filterValue: string = '';
   page: number = 1;
   rowsPerPage: number = 10;
+  isLoading: boolean = false;
   isUploading: boolean = false;
   sortConfig = { key: '', direction: 'asc' };
   hiddenColumns: string[] = [];
@@ -38,22 +41,36 @@ export class DoctorListComponent implements OnInit {
     { key: 'actions', label: 'Actions', align: 'center' },
   ];
 
-  private readonly API_BASE = 'http://128.199.27.135:8081';
+  private readonly API_BASE = API_BASE;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private doctorService: DoctorService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.fetchDoctors();
   }
 
   fetchDoctors() {
-    this.http.get<any>(`${this.API_BASE}/api/doctors`).subscribe({
-      next: (res) => {
-        // Based on React code: res.data.data.content
-        this.doctors = res?.data?.data?.content || [];
+    // Only show big loader if we have NO data yet
+    if (this.doctors.length === 0) {
+      this.isLoading = true;
+    }
+
+    this.doctorService.getDoctors().subscribe({
+      next: (data) => {
+        this.doctors = data;
         this.initialData = [...this.doctors];
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Force UI update
       },
-      error: (err) => console.error('Error fetching doctors:', err)
+      error: (err) => {
+        console.error('Error fetching doctors:', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -115,12 +132,17 @@ export class DoctorListComponent implements OnInit {
 
   handleDelete(id: any) {
     if (confirm('Are you sure you want to delete this doctor?')) {
-      this.http.delete(`${this.API_BASE}/api/doctors/${id}`).subscribe({
+      this.doctorService.deleteDoctor(id).subscribe({
         next: () => {
           this.doctors = this.doctors.filter(d => d.id !== id);
+          this.initialData = [...this.doctors];
+          this.cdr.detectChanges();
           alert('Doctor deleted successfully');
         },
-        error: (err) => console.error('Error deleting doctor:', err)
+        error: (err) => {
+          console.error('Error deleting doctor:', err);
+          alert('Failed to delete doctor');
+        }
       });
     }
   }

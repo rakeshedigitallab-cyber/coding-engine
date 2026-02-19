@@ -30,7 +30,7 @@
                                 <i class="fa-solid fa-magnifying-glass text-secondary"></i>
                             </span>
                             <input type="text" class="form-control border-start-0 border-blue shadow-none"
-                                placeholder="Search" [(ngModel)]="filterValue" (ngModelChange)="applyFilters()">
+                                placeholder="Search" [(ngModel)]="filterValue">
                         </div>
                     </div>
 
@@ -56,23 +56,31 @@
                                 (click)="isColumnMenuOpen = !isColumnMenuOpen" title="Show/Hide Columns">
                                 <i class="fa-solid fa-table-cells fs-5"></i>
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end shadow-lg p-2 mt-2 column-dropdown"
-                                [class.show]="isColumnMenuOpen"
-                                style="max-height: 400px; overflow-y: auto; width: 250px;">
-                                <button class="dropdown-item fw-bold text-uppercase border-bottom py-2"
-                                    (click)="showAllColumns()">Show All Columns</button>
-                                @for (col of columnDefinitions; track col.key) {
-                                <div class="dropdown-item d-flex align-items-center py-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            [checked]="isColumnVisible(col.key)" (change)="toggleColumn(col.key)"
-                                            [id]="'col-' + col.key">
-                                        <label class="form-check-label ms-2" [for]="'col-' + col.key">
-                                            {{ col.label }}
-                                        </label>
-                                    </div>
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg p-0 mt-2 column-dropdown"
+                                [class.show]="isColumnMenuOpen" (click)="$event.stopPropagation()">
+                                <div
+                                    class="dropdown-header fw-bold text-uppercase border-bottom py-3 bg-light text-primary">
+                                    Display Columns
                                 </div>
-                                }
+                                <div class="column-scroll-area">
+                                    <button class="dropdown-item py-2 fw-semibold text-success border-bottom"
+                                        (click)="showAllColumns()">
+                                        <i class="fa-solid fa-check-double me-2"></i> Show All Columns
+                                    </button>
+                                    @for (col of columnDefinitions; track col.key) {
+                                    <div class="dropdown-item py-2">
+                                        <div class="form-check custom-checkbox">
+                                            <input class="form-check-input cursor-pointer" type="checkbox"
+                                                [checked]="isColumnVisible(col.key)" (change)="toggleColumn(col.key)"
+                                                [id]="'col-' + col.key">
+                                            <label class="form-check-label ms-2 cursor-pointer w-100"
+                                                [for]="'col-' + col.key">
+                                                {{ col.label }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,20 +113,31 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Skeleton Rows -->
+                            <ng-container *ngIf="isLoading && data.length === 0">
+                                <tr *ngFor="let item of [1,2,3,4,5,6,7,8,9,10]">
+                                    <td *ngFor="let col of columnDefinitions" [style.width]="col.width"
+                                        [style.min-width]="col.width" [class]="'text-' + col.align" class="px-3 py-2">
+                                        <div *ngIf="isColumnVisible(col.key)" class="skeleton skeleton-text"
+                                            [class.m-auto]="col.align === 'center'"></div>
+                                    </td>
+                                </tr>
+                            </ng-container>
                             @if (data.length > 0) {
-                            @for (row of paginatedData; track row) {
+                            @for (row of paginatedData; track row.icdCode || $index) {
                             <tr>
                                 @for (col of columnDefinitions; track col.key) {
                                 @if (isColumnVisible(col.key)) {
                                 <td [class]="'text-' + col.align" class="text-truncate px-3 py-2"
-                                    [style.max-width]="col.width" [title]="renderCellValue(row[col.key])">
+                                    [style.width]="col.width" [style.min-width]="col.width"
+                                    [title]="renderCellValue(row[col.key])">
                                     {{ renderCellValue(row[col.key]) }}
                                 </td>
                                 }
                                 }
                             </tr>
                             }
-                            } @else {
+                            } @else if (!isLoading) {
                             <tr>
                                 <td [attr.colspan]="columnDefinitions.length"
                                     class="text-center py-5 text-muted fst-italic">
@@ -130,13 +149,6 @@
                     </table>
                 </div>
 
-                <!-- Loading Overlays -->
-                @if (isUploading || isDownloading) {
-                <div class="loading-overlay d-flex flex-column align-items-center justify-content-center">
-                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-                    <h5 class="mt-3 text-white">{{ isUploading ? 'Uploading XML...' : 'Generating File...' }}</h5>
-                </div>
-                }
 
                 <!-- Pagination Section -->
                 <div class="d-flex justify-content-between align-items-center py-3 border-top bg-white px-3">

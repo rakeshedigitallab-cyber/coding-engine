@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { API_BASE } from '../../api-config';
 
 interface ColumnDef {
   key: string;
@@ -20,17 +21,21 @@ interface ColumnDef {
 })
 export class CodeListComponent implements OnInit {
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
-  data: any[] = [];
+  private readonly API_BASE = API_BASE;
+
   initialData: any[] = [];
-  filterValue: string = '';
+  data: any[] = [];
+  filterValueInternal: string = '';
   page: number = 1;
-  rowsPerPage: number = 30;
+  rowsPerPage: number = 25;
+  isLoading: boolean = false;
   isUploading: boolean = false;
   isDownloading: boolean = false;
 
   sortConfig = { key: '', direction: 'asc' };
-  hiddenColumns: string[] = [];
+  hiddenColumns: string[] = []; // Default to show all headers as per user request
   isColumnMenuOpen: boolean = false;
 
   columnDefinitions: ColumnDef[] = [
@@ -75,57 +80,13 @@ export class CodeListComponent implements OnInit {
     this.fetchData();
   }
 
-  fetchData() {
-    this.http.get<any[]>('http://localhost:8081/icd10/all').subscribe({
-      next: (res) => {
-        this.initialData = res;
-        this.applyFilters();
-      },
-      error: (err) => {
-        console.error('Error fetching data:', err);
-      }
-    });
+  get filterValue(): string {
+    return this.filterValueInternal;
   }
 
-  applyFilters() {
-    let filtered = [...this.initialData];
-    const searchTerm = this.filterValue.toLowerCase().trim();
-
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        Object.values(item).some(val =>
-          val && val.toString().toLowerCase().includes(searchTerm)
-        )
-      );
-    }
-
-    if (this.sortConfig.key) {
-      filtered.sort((a, b) => {
-        const aVal = a[this.sortConfig.key];
-        const bVal = b[this.sortConfig.key];
-        if (aVal < bVal) return this.sortConfig.direction === 'asc' ? -1 : 1;
-        if (aVal > bVal) return this.sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
-    this.data = filtered;
-    this.page = 1;
-  }
-
-  get paginatedData() {
-    const start = (this.page - 1) * this.rowsPerPage;
-    return this.data.slice(start, start + this.rowsPerPage);
-  }
-
-  get totalPages() {
-    return Math.ceil(this.data.length / this.rowsPerPage);
-  }
-
-  handlePageChange(newPage: number) {
-    if (newPage >= 1 && newPage <= this.totalPages) {
-      this.page = newPage;
-    }
+  set filterValue(val: string) {
+    this.filterValueInternal = val;
+    this.applyFilters();
   }
 
   requestSort(key: string) {
@@ -136,6 +97,74 @@ export class CodeListComponent implements OnInit {
       this.sortConfig.direction = 'asc';
     }
     this.applyFilters();
+  }
+
+  fetchData() {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    this.http.get<any>(`${this.API_BASE}/icd10/all`).subscribe({
+      next: (res) => {
+        let extractedData = [];
+        if (Array.isArray(res)) extractedData = res;
+        else if (res?.data && Array.isArray(res.data)) extractedData = res.data;
+        else if (res?.data?.data && Array.isArray(res.data.data)) extractedData = res.data.data;
+        else if (res?.content && Array.isArray(res.content)) extractedData = res.content;
+
+        this.initialData = extractedData;
+        this.applyFilters();
+        this.isLoading = false;
+        this.cdr.detectChanges(); // Force UI to show data immediately
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  applyFilters() {
+    const term = this.filterValue.toLowerCase().trim();
+    let processed = [...this.initialData];
+
+    // Filter
+    if (term) {
+      processed = processed.filter(item =>
+        Object.values(item).some(val =>
+          val && val.toString().toLowerCase().includes(term)
+        )
+      );
+    }
+
+    // Sort
+    if (this.sortConfig.key) {
+      processed.sort((a, b) => {
+        const aVal = a[this.sortConfig.key] ?? '';
+        const bVal = b[this.sortConfig.key] ?? '';
+        if (aVal < bVal) return this.sortConfig.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return this.sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    this.data = processed;
+    this.page = 1; // Reset to first page on filter/sort change
+  }
+
+  get paginatedData() {
+    const start = (this.page - 1) * this.rowsPerPage;
+    return this.data.slice(start, start + this.rowsPerPage);
+  }
+
+  get totalPages() {
+    return Math.ceil(this.data.length / this.rowsPerPage) || 1;
+  }
+
+  handlePageChange(newPage: number) {
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.page = newPage;
+    }
   }
 
   toggleColumn(key: string) {
@@ -163,7 +192,7 @@ export class CodeListComponent implements OnInit {
 
   downloadExcel() {
     this.isDownloading = true;
-    this.http.get('http://localhost:8081/icd10/download', { responseType: 'blob' }).subscribe({
+    this.http.get(`${this.API_BASE}/icd10/download`, { responseType: 'blob' }).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -177,7 +206,6 @@ export class CodeListComponent implements OnInit {
   }
 
   exportPDF() {
-    // In a real app, we'd use jspdf here
     alert('PDF Export initiated');
   }
 
@@ -196,7 +224,7 @@ export class CodeListComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', file);
     this.isUploading = true;
-    this.http.post('http://localhost:8081/icd10/post', formData).subscribe({
+    this.http.post(`${this.API_BASE}/icd10/post`, formData).subscribe({
       next: () => {
         this.isUploading = false;
         this.fetchData();

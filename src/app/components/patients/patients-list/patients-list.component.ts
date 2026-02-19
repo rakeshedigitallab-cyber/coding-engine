@@ -1,17 +1,23 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
+import { PatientService } from '../../../services/patient.service';
+import { API_BASE } from '../../../api-config';
 
 @Component({
-  selector: 'app-patients',
+  selector: 'app-patients-list',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, RouterLink],
-  templateUrl: './patients.component.html',
-  styleUrl: './patients.component.css',
+  templateUrl: './patients-list.component.html',
+  styleUrl: './patients-list.component.css',
 })
-export class PatientsComponent implements OnInit {
+export class PatientsListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private patientService = inject(PatientService);
+  private http = inject(HttpClient);
+
   data: any[] = [];
   initialData: any[] = [];
   filterValue: string = '';
@@ -19,12 +25,11 @@ export class PatientsComponent implements OnInit {
   rowsPerPage: number = 20;
   sortConfig = { key: '', direction: 'asc' };
   hiddenColumns: string[] = [];
+  isLoading: boolean = false;
   isUploading: boolean = false;
   openDialog: boolean = false;
   selectedPatient: any = null;
   anchorEl: HTMLElement | null = null;
-
-  @ViewChild('fileInput') fileInput!: ElementRef;
 
   columnDefinitions = [
     { key: 'id', label: 'Patient ID', align: 'left' },
@@ -40,20 +45,27 @@ export class PatientsComponent implements OnInit {
     { key: 'actions', label: 'Actions', align: 'center' },
   ];
 
-  constructor(private http: HttpClient) { }
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   ngOnInit() {
     this.fetchData();
   }
 
   fetchData() {
-    this.http.get<any[]>('http://localhost:8081/patients/view').subscribe({
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    this.patientService.getPatients(true).subscribe({
       next: (res) => {
         this.data = res;
         this.initialData = res;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching data:', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -99,11 +111,13 @@ export class PatientsComponent implements OnInit {
       direction = 'desc';
     }
     this.sortConfig = { key, direction };
+    this.cdr.detectChanges();
   }
 
   handlePageChange(newPage: number) {
     if (newPage >= 1 && newPage <= this.totalPages) {
       this.page = newPage;
+      this.cdr.detectChanges();
     }
   }
 
@@ -114,10 +128,12 @@ export class PatientsComponent implements OnInit {
     } else {
       this.hiddenColumns.splice(index, 1);
     }
+    this.cdr.detectChanges();
   }
 
   showAllColumns() {
     this.hiddenColumns = [];
+    this.cdr.detectChanges();
   }
 
   handleOpenDialog(patient: any) {
@@ -132,14 +148,23 @@ export class PatientsComponent implements OnInit {
 
   handleConfirmDelete() {
     if (!this.selectedPatient) return;
-    this.http.delete(`http://localhost:8081/patients/delete/${this.selectedPatient.id}`).subscribe({
+    const idToDelete = this.selectedPatient.id;
+
+    this.patientService.deletePatient(idToDelete).subscribe({
       next: () => {
-        this.fetchData();
+        // Update local state instantly
+        this.initialData = this.initialData.filter(item => item.id !== idToDelete);
+        this.data = [...this.initialData];
+
         this.handleCloseDialog();
+        this.cdr.detectChanges();
+        alert('Patient deleted successfully');
       },
       error: (err) => {
         console.error('Error deleting patient:', err);
+        alert('Failed to delete patient');
         this.handleCloseDialog();
+        this.cdr.detectChanges();
       }
     });
   }
@@ -169,7 +194,6 @@ export class PatientsComponent implements OnInit {
   }
 
   exportPDF() {
-    // Note: requires jspdf and jspdf-autotable to be installed and imported
     console.log('Exporting PDF...');
   }
 
@@ -185,7 +209,7 @@ export class PatientsComponent implements OnInit {
     formData.append('file', file);
     this.isUploading = true;
 
-    this.http.post('http://128.199.27.135:8081/icd10/post', formData).subscribe({
+    this.http.post(`${API_BASE}/icd10/post`, formData).subscribe({
       next: () => {
         this.isUploading = false;
         this.fetchData();
@@ -201,4 +225,3 @@ export class PatientsComponent implements OnInit {
     this.anchorEl = this.anchorEl ? null : (event.currentTarget as HTMLElement);
   }
 }
-
