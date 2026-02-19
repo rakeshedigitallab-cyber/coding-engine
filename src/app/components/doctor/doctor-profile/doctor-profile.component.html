@@ -1,0 +1,271 @@
+<div class="header-section">
+    <div id="page-head" class="px-3 pt-4 pb-5">
+        <div id="page-title" class="d-flex justify-content-between align-items-center">
+            <h1 class="page-header text-white">Doctor Profile</h1>
+            <div class="header-actions">
+                <button class="btn btn-sm btn-light fw-bold px-3 shadow-sm border-0" [routerLink]="['/doctor']">
+                    <i class="fa-solid fa-arrow-left me-2 text-primary"></i> Back to List
+                </button>
+            </div>
+        </div>
+        <ul class="breadcrumb-custom">
+            <li><a [routerLink]="['/']"><i class="fa-solid fa-house"></i></a></li>
+            <li><a>Doctors</a></li>
+            <li class="active">Profile</li>
+        </ul>
+    </div>
+</div>
+
+<div id="content-container" class="px-3">
+    <div class="col-lg-12 main-card-container">
+        <div class="card border-0 main-box-card">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Skeleton Loading State -->
+                <div *ngIf="loading" class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card shadow-none border-0 bg-light bg-opacity-25 rounded-4 p-4 text-center">
+                            <div class="skeleton skeleton-circle d-inline-block mb-4 mt-3 mx-auto"></div>
+                            <div class="skeleton skeleton-title mx-auto mb-3"></div>
+                            <div class="skeleton skeleton-text mx-auto" style="width: 40%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="!loading && (errorMessage || !doctor)" class="text-center py-5">
+                    <div class="bg-soft-warning d-inline-block p-4 rounded-circle mb-4">
+                        <i class="fa-solid fa-triangle-exclamation fa-4x text-warning"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark-blue">{{ errorMessage || 'Doctor Not Found' }}</h3>
+                    <button class="btn btn-primary mt-3" (click)="retry()">Retry</button>
+                </div>
+
+                <!-- Profile Content -->
+                <div class="row g-5" *ngIf="!loading && doctor">
+
+                    <!-- Left Column: Primary Profile Info -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-none border-0 h-100 p-2">
+                            <div class="text-center">
+                                <div class="position-relative d-inline-block mb-4 pt-4">
+                                    <div class="profile-img-glow"></div>
+                                    <img [src]="getProfileImage(doctor.profilePhotoUrl)"
+                                        (error)="handleImageError($event)"
+                                        class="rounded-circle profile-img-large position-relative" alt="Doctor Profile">
+                                    <div class="position-absolute bottom-0 end-0 p-1 bg-white rounded-circle shadow"
+                                        style="margin-right: 15px; margin-bottom: 8px; z-index: 2;">
+                                        <div class="bg-success rounded-circle"
+                                            style="width: 14px; height: 14px; border: 2px solid #fff;"></div>
+                                    </div>
+                                </div>
+
+                                <h3 class="fw-bold mb-1 text-dark-blue ls-n1">Dr. {{doctor.firstName}}
+                                    {{doctor.lastName}}</h3>
+                                <p class="text-muted mb-4 fw-medium small">
+                                    <span class="opacity-75">{{doctor.education || 'Senior Associate
+                                        Specialist'}}</span>
+                                </p>
+
+                                <div class="d-flex justify-content-center gap-2 mb-5">
+                                    <span
+                                        class="badge bg-soft-primary text-primary px-4 py-2 rounded-pill fw-bold border border-primary border-opacity-10 shadow-sm">
+                                        {{doctor.department || 'Medical Staff'}}
+                                    </span>
+                                </div>
+
+                                <div class="row g-3 mb-5">
+                                    <div class="col-6">
+                                        <div class="p-3 stat-card rounded-4 border-0">
+                                            <i class="fa-solid fa-user-injured text-primary mb-2"></i>
+                                            <div class="text-muted x-small fw-bold text-uppercase opacity-75">Patients
+                                            </div>
+                                            <div class="fs-5 ls-n1">3.4k+</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 stat-card rounded-4 border-0">
+                                            <i class="fa-solid fa-calendar-check text-success mb-2"></i>
+                                            <div class="text-muted x-small fw-bold text-uppercase opacity-75">Ops</div>
+                                            <div class="fs-5 ls-n1">1.3k</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 stat-card rounded-4 border-0">
+                                            <i class="fa-solid fa-hospital text-info mb-2"></i>
+                                            <div class="text-muted x-small fw-bold text-uppercase opacity-75">Clubs
+                                            </div>
+                                            <div class="fs-5 ls-n1">12</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 stat-card rounded-4 border-0">
+                                            <i class="fa-solid fa-award text-warning mb-2"></i>
+                                            <div class="text-muted x-small fw-bold text-uppercase opacity-75">Exp</div>
+                                            <div class="fs-5 ls-n1">14 Ys</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="text-start mb-5 p-4 bg-light bg-opacity-25 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
+                                    <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                        <i class="fa-solid fa-quote-right fa-2x"></i>
+                                    </div>
+                                    <h6 class="section-title">About</h6>
+                                    <p class="text-muted small lh-lg mb-0 position-relative" style="font-weight: 500;">
+                                        {{doctor.aboutDoctor || 'Passionate about delivering high-quality healthcare and
+                                        making a positive impact on patient lives through expert clinical knowledge and
+                                        empathy.'}}
+                                    </p>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary flex-grow-1 fw-bold shadow py-2 rounded-3 border-0">
+                                        <i class="fa-solid fa-comment-medical me-2"></i> CONSULT
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Extended Details -->
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-column gap-5">
+
+                            <!-- Personal Info & Skills -->
+                            <div class="row g-4">
+                                <div class="col-md-7">
+                                    <h6 class="section-title">Bio Information</h6>
+                                    <div class="card shadow-none border-0 bg-white rounded-4 p-2 shadow-sm">
+                                        <div class="d-flex flex-column">
+                                            <div class="info-row border-0">
+                                                <span class="label">Full Name</span>
+                                                <span class="value text-dark-blue fw-bold">Dr. {{doctor.firstName}}
+                                                    {{doctor.lastName}}</span>
+                                            </div>
+                                            <div class="info-row border-0">
+                                                <span class="label">Phone</span>
+                                                <span class="value text-dark-blue fw-bold">{{doctor.phoneNumber ||
+                                                    'N/A'}}</span>
+                                            </div>
+                                            <div class="info-row border-0">
+                                                <span class="label">Email</span>
+                                                <span class="value text-primary fw-bold small">{{doctor.email ||
+                                                    'N/A'}}</span>
+                                            </div>
+                                            <div class="info-row border-0">
+                                                <span class="label">Address</span>
+                                                <span class="value small text-muted text-end"
+                                                    style="max-width: 200px; font-weight: 500;">{{doctor.doctorAddress
+                                                    || 'N/A'}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <h6 class="section-title">Core Skills</h6>
+                                    <div class="d-flex flex-column gap-4">
+                                        <div *ngFor="let skill of abilities" class="skill-item">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span
+                                                    class="small fw-bold text-dark-blue opacity-75">{{skill.label}}</span>
+                                                <span class="small fw-bold text-primary">{{skill.value}}%</span>
+                                            </div>
+                                            <div class="progress"
+                                                style="height: 5px; background: #eef2f7; border-radius: 10px;">
+                                                <div class="progress-bar rounded-pill shadow-none"
+                                                    [ngClass]="skill.color" [style.width.%]="skill.value"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Experience -->
+                            <div>
+                                <h6 class="section-title">Experience Timeline</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6" *ngFor="let exp of experiences">
+                                        <div class="experience-card p-4 rounded-4 border-0 bg-white shadow-sm h-100">
+                                            <div class="d-flex gap-3 align-items-center mb-3">
+                                                <div class="p-2 bg-soft-primary rounded-4">
+                                                    <img [src]="exp.logo" alt="logo"
+                                                        style="width: 28px; height: 28px; filter: grayscale(1) brightness(0.5);">
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-0 text-dark-blue" style="font-size: 0.8rem;">
+                                                        {{exp.title}}</h6>
+                                                    <div class="text-success x-small fw-bold">Verified Institution</div>
+                                                </div>
+                                            </div>
+                                            <p class="small text-primary fw-bold mb-3">{{exp.role}}</p>
+                                            <div class="d-flex flex-column gap-1">
+                                                <div class="text-muted x-small d-flex align-items-center fw-medium">
+                                                    <i class="fa-regular fa-clock me-2 opacity-50"></i> {{exp.duration}}
+                                                </div>
+                                                <div class="text-muted x-small d-flex align-items-center fw-medium">
+                                                    <i class="fa-solid fa-location-dot me-2 opacity-30 text-danger"></i>
+                                                    {{exp.location}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Appointments Queue -->
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="section-title mb-0">Today's Schedule</h6>
+                                    <button class="btn btn-sm btn-soft-primary px-3 fw-bold rounded-pill">View Full
+                                        Calendar</button>
+                                </div>
+                                <div class="table-responsive bg-white rounded-4 p-2 shadow-sm border border-light">
+                                    <table class="table table-borderless align-middle mb-0">
+                                        <thead>
+                                            <tr class="text-muted x-small fw-bold text-uppercase ls-1">
+                                                <th class="ps-4">Patient Info</th>
+                                                <th>Time</th>
+                                                <th>Diagnosis</th>
+                                                <th class="text-center pe-4">Manage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let apt of appointments" class="hover-row">
+                                                <td class="ps-4 py-3">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                                                            style="width: 32px; height: 32px; font-size: 0.7rem; background: linear-gradient(45deg, #25476a, #4a90e2);">
+                                                            {{apt.name.charAt(0)}}
+                                                        </div>
+                                                        <span class="fw-bold text-dark-blue"
+                                                            style="font-size: 0.85rem;">{{apt.name}}</span>
+                                                    </div>
+                                                </td>
+                                                <td><span class="badge bg-soft-primary text-primary px-3 py-2 fw-bold"
+                                                        style="font-size: 0.75rem;">{{apt.time}}</span></td>
+                                                <td><span class="text-muted fw-bold"
+                                                        style="font-size: 0.75rem;">{{apt.reason}}</span></td>
+                                                <td class="text-center pe-4">
+                                                    <div class="d-flex gap-2 justify-content-center">
+                                                        <button
+                                                            class="btn btn-sm btn-light rounded-3 text-secondary border shadow-none"
+                                                            style="width: 30px; height: 30px;"><i
+                                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

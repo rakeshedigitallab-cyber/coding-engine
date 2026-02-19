@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { API_BASE } from '../../api-config';
 
 @Component({
   selector: 'app-icd-code10',
@@ -38,7 +39,7 @@ export class IcdCode10Component implements OnInit {
   }
 
   fetchData() {
-    this.http.get<any[]>("http://localhost:8081/icd10/all").subscribe({
+    this.http.get<any[]>(`${API_BASE}/icd10/all`).subscribe({
       next: (allData) => {
         const updatedData = allData.map(item => {
           const isUnspecified = item.codeDescription

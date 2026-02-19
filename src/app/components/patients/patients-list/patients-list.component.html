@@ -113,47 +113,60 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let row of paginatedData">
-                                    <td *ngFor="let col of columnDefinitions" [hidden]="hiddenColumns.includes(col.key)"
-                                        [class.text-center]="col.align === 'center'">
-
-                                        <ng-container *ngIf="col.key === 'actions'; else dataCell">
-                                            <div class="d-flex justify-content-center gap-1">
-                                                <button class="btn btn-sm btn-pink icon-btn"
-                                                    title="View Patient Profile"
-                                                    [routerLink]="['/patient_profile', row.id]">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-mint icon-btn"
-                                                    title="Edit Patient Information"
-                                                    [routerLink]="['/edit-patient', row.id]">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-success icon-btn" title="Delete Patient"
-                                                    (click)="handleOpenDialog(row)">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
+                                <!-- Loading State -->
+                                <tr *ngIf="isLoading">
+                                    <td [attr.colspan]="columnDefinitions.length" class="text-center py-5">
+                                        <div class="d-flex flex-column align-items-center justify-content-center py-4">
+                                            <div class="spinner-border text-primary mb-3" role="status">
+                                                <span class="visually-hidden">Loading...</span>
                                             </div>
-                                        </ng-container>
-
-                                        <ng-template #dataCell>
-                                            <div class="text-truncate px-1" [title]="renderCellValue(row[col.key])">
-                                                {{ renderCellValue(row[col.key]) }}
-                                            </div>
-                                        </ng-template>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="paginatedData.length === 0">
-                                    <td colspan="100" class="text-center py-5 text-muted border-0">
-                                        <div class="d-flex flex-column align-items-center justify-content-center"
-                                            style="min-height: 200px; opacity: 0.6;">
-                                            <i class="fa-solid fa-folder-open fs-1 mb-3"></i>
-                                            <h5 class="fw-bold mb-1">No patients found</h5>
-                                            <p class="small mb-0">Try adjusting your search criteria or adding a new
-                                                patient.</p>
+                                            <h6 class="text-muted fw-bold">Fetching patients data...</h6>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <ng-container *ngIf="!isLoading">
+                                    <tr *ngFor="let row of paginatedData">
+                                        <td *ngFor="let col of columnDefinitions"
+                                            [hidden]="hiddenColumns.includes(col.key)"
+                                            [class.text-center]="col.align === 'center'">
+
+                                            <ng-container *ngIf="col.key === 'actions'; else dataCell">
+                                                <div class="d-flex gap-2 justify-content-center">
+                                                    <button class="btn btn-sm btn-action view"
+                                                        [routerLink]="['/patient_profile', row.id]" title="View">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-action edit"
+                                                        [routerLink]="['/edit-patient', row.id]" title="Edit">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-action delete"
+                                                        (click)="handleOpenDialog(row)" title="Delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </ng-container>
+
+                                            <ng-template #dataCell>
+                                                <div class="text-truncate px-1" [title]="renderCellValue(row[col.key])">
+                                                    {{ renderCellValue(row[col.key]) }}
+                                                </div>
+                                            </ng-template>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="paginatedData.length === 0">
+                                        <td colspan="100" class="text-center py-5 text-muted border-0">
+                                            <div class="d-flex flex-column align-items-center justify-content-center"
+                                                style="min-height: 200px; opacity: 0.6;">
+                                                <i class="fa-solid fa-folder-open fs-1 mb-3"></i>
+                                                <h5 class="fw-bold mb-1">No patients found</h5>
+                                                <p class="small mb-0">Try adjusting your search criteria or adding a new
+                                                    patient.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
                     </div>

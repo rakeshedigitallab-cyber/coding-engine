@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { AppointBillingComponent } from '../appoint-billing/appoint-billing.component';
+import { API_BASE } from '../../api-config';
 
 @Component({
   selector: 'app-appointment',
@@ -87,7 +88,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   fetchPatientData() {
-    this.http.get<any>(`http://128.199.27.135:8081/patients/view/${this.patientId}`)
+    this.http.get<any>(`${API_BASE}/patients/view/${this.patientId}`)
       .subscribe({
         next: (data) => {
           this.patientData = data;
@@ -116,7 +117,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   fetchBookedTimes(date: string) {
-    this.http.get<string[]>(`http://128.199.27.135:8081/appointments/booked-times/${date}`)
+    this.http.get<string[]>(`${API_BASE}/appointments/booked-times/${date}`)
       .subscribe({
         next: (data) => {
           this.disabledTimes = data.map((time: string) => {
@@ -172,7 +173,7 @@ export class AppointmentComponent implements OnInit {
     };
 
     // Note: The original React code posted to appointments/create/${patientId}
-    this.http.post(`http://128.199.27.135:8081/appointments/create/${this.patientId}`, finalData)
+    this.http.post(`${API_BASE}/appointments/create/${this.patientId}`, finalData)
       .subscribe({
         next: (res) => {
           console.log("Appointment created:", res);

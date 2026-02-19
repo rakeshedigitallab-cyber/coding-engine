@@ -113,41 +113,36 @@
     z-index: 1000;
 }
 
-.icon-btn {
+/* Action Buttons */
+.btn-action {
     width: 32px;
     height: 32px;
     padding: 0;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 
-.btn-pink {
-    background-color: #e91e63;
-    border-color: #e91e63;
+.btn-action.view {
+    color: #d81b60;
+    background: rgba(216, 27, 96, 0.1);
 }
 
-.btn-pink:hover {
-    background-color: #d81b60;
-    border-color: #d81b60;
-    transform: translateY(-1px);
+.btn-action.edit {
+    color: #00bfa5;
+    background: rgba(0, 191, 165, 0.1);
 }
 
-.btn-mint {
-    background-color: #26a69a;
-    border-color: #26a69a;
+.btn-action.delete {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
 }
 
-.btn-mint:hover {
-    background-color: #2bbbad;
-    border-color: #2bbbad;
-    transform: translateY(-1px);
-}
-
-.btn-success:hover {
-    transform: translateY(-1px);
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .table-container {

@@ -12,160 +12,194 @@
 </div>
 
 <div id="content-container" class="px-3">
-    <div class="col-lg-12 main-card-container border rounded shadow-sm p-4 bg-white">
-        <h4 class="mb-4 fw-semibold" style="color: #25476a;">Doctors List</h4>
+    <div class="col-lg-12 main-card-container">
+        <div class="card shadow-none border-0 h-100 bg-white">
+            <div class="card-body p-4 d-flex flex-column h-100">
 
-        <!-- Toolbar Section -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div>
-                <button class="btn btn-success d-flex align-items-center gap-2" [routerLink]="['/new-doctor']">
-                    <i class="fa-solid fa-plus"></i> Add Doctor
-                </button>
-            </div>
+                <!-- Toolbar Section -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div>
+                        <button class="btn btn-success d-flex align-items-center gap-2 px-3 fw-semibold"
+                            [routerLink]="['/create-doctor']">
+                            <i class="fa-solid fa-plus"></i> Add Doctor
+                        </button>
+                    </div>
 
-            <div class="d-flex align-items-center gap-2 toolbar-right">
-                <div class="search-box position-relative">
-                    <i class="fa-solid fa-search position-absolute text-muted"
-                        style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
-                    <input type="text" class="form-control ps-5" placeholder="Search Doctor..."
-                        [(ngModel)]="filterValue">
-                </div>
+                    <div class="d-flex align-items-center gap-2 toolbar-right">
+                        <div class="search-box position-relative">
+                            <i class="fa-solid fa-search position-absolute text-muted"
+                                style="left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                            <input type="text" class="form-control ps-5" placeholder="Search Doctor..."
+                                [(ngModel)]="filterValue">
+                        </div>
 
-                <button class="btn btn-outline-primary" (click)="exportPDF()" title="Generate PDF">
-                    <i class="fa-solid fa-file-pdf"></i>
-                </button>
+                        <button class="btn btn-outline-primary" (click)="exportPDF()" title="Generate PDF">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </button>
 
-                <button class="btn btn-outline-primary" (click)="fileInput.click()" title="Upload XML">
-                    <i class="fa-solid fa-upload"></i>
-                </button>
-                <input type="file" #fileInput (change)="handleFileUpload($event)" style="display: none;" accept=".xml">
+                        <button class="btn btn-outline-primary" (click)="fileInput.click()" title="Upload XML">
+                            <i class="fa-solid fa-upload"></i>
+                        </button>
+                        <input type="file" #fileInput (change)="handleFileUpload($event)" style="display: none;"
+                            accept=".xml">
 
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary" type="button" (click)="showColumnMenu = !showColumnMenu">
-                        <i class="fa-solid fa-table-list"></i>
-                    </button>
-                    <div class="dropdown-menu show" *ngIf="showColumnMenu" style="right: 0; left: auto;">
-                        <div class="px-3 py-2 border-bottom fw-bold small text-uppercase">Show / Hide Columns</div>
-                        <div class="column-toggle-list" style="max-height: 300px; overflow-y: auto;">
-                            <div class="dropdown-item d-flex align-items-center gap-2"
-                                *ngFor="let col of columnDefinitions">
-                                <input type="checkbox" [checked]="isColumnVisible(col.key)"
-                                    (change)="toggleColumn(col.key)">
-                                <span>{{col.label}}</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary" type="button"
+                                (click)="showColumnMenu = !showColumnMenu">
+                                <i class="fa-solid fa-table-list"></i>
+                            </button>
+                            <div class="dropdown-menu show" *ngIf="showColumnMenu" style="right: 0; left: auto;">
+                                <div class="px-3 py-2 border-bottom fw-bold small text-uppercase">Show / Hide Columns
+                                </div>
+                                <div class="column-toggle-list" style="max-height: 300px; overflow-y: auto;">
+                                    <div class="dropdown-item d-flex align-items-center gap-2"
+                                        *ngFor="let col of columnDefinitions">
+                                        <input type="checkbox" [checked]="isColumnVisible(col.key)"
+                                            (change)="toggleColumn(col.key)">
+                                        <span>{{col.label}}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Loading Overlay -->
-        <div class="upload-overlay" *ngIf="isUploading">
-            <div class="spinner-border text-primary" role="status"></div>
-            <span class="ms-2">Uploading...</span>
-        </div>
+                <!-- Loading Overlay -->
+                <div class="upload-overlay" *ngIf="isUploading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <span class="ms-2">Uploading...</span>
+                </div>
 
-        <!-- Table Section -->
-        <div class="table-responsive">
-            <table class="table table-hover align-middle custom-table">
-                <thead class="bg-light sticky-top">
-                    <tr>
-                        <ng-container *ngFor="let col of columnDefinitions">
-                            <th *ngIf="isColumnVisible(col.key)" [class.text-center]="col.align === 'center'"
-                                (click)="requestSort(col.key)" class="sortable-header">
-                                <div class="d-flex align-items-center gap-2"
-                                    [class.justify-content-center]="col.align === 'center'">
-                                    {{ col.label }}
-                                    <span class="sort-icons" *ngIf="col.key !== 'actions'">
-                                        <i class="fa-solid fa-sort" *ngIf="sortConfig.key !== col.key"></i>
-                                        <i class="fa-solid" [class.fa-sort-up]="sortConfig.direction === 'asc'"
-                                            [class.fa-sort-down]="sortConfig.direction === 'desc'"
-                                            *ngIf="sortConfig.key === col.key"></i>
-                                    </span>
-                                </div>
-                            </th>
-                        </ng-container>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let row of paginatedData; let i = index">
-                        <ng-container *ngFor="let col of columnDefinitions">
-                            <td *ngIf="isColumnVisible(col.key)" [class.text-center]="col.align === 'center'">
-
-                                <!-- Custom Renders -->
-                                <ng-container [ngSwitch]="col.key">
-
-                                    <!-- Picture -->
-                                    <div *ngSwitchCase="'profilePhotoUrl'">
-                                        <img [src]="getProfileImage(row.profilePhotoUrl)"
-                                            (error)="handleImageError($event)" class="rounded-circle profile-img-thumb"
-                                            alt="Profile">
-                                    </div>
-
-                                    <!-- Actions -->
-                                    <div *ngSwitchCase="'actions'" class="d-flex gap-2 justify-content-center">
-                                        <button class="btn btn-sm btn-action view"
-                                            [routerLink]="['/doctor-profile', row.id]" title="View">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-action edit"
-                                            [routerLink]="['/edit-doctor', row.id]" title="Edit">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-action delete" (click)="handleDelete(row.id)"
-                                            title="Delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-
-                                    <!-- Default Text -->
-                                    <div *ngSwitchDefault class="text-truncate" [title]="row[col.key]">
-                                        {{ row[col.key] }}
-                                    </div>
-
+                <!-- Table Section -->
+                <div class="table-responsive">
+                    <table class="table table-hover custom-table">
+                        <thead class="bg-light sticky-top">
+                            <tr>
+                                <ng-container *ngFor="let col of columnDefinitions">
+                                    <th *ngIf="isColumnVisible(col.key)" [class.text-center]="col.align === 'center'"
+                                        (click)="requestSort(col.key)" class="sortable-header">
+                                        <div class="d-flex align-items-center gap-2"
+                                            [class.justify-content-center]="col.align === 'center'">
+                                            {{ col.label }}
+                                            <span class="sort-icons" *ngIf="col.key !== 'actions'">
+                                                <i class="fa-solid fa-sort" *ngIf="sortConfig.key !== col.key"></i>
+                                                <i class="fa-solid" [class.fa-sort-up]="sortConfig.direction === 'asc'"
+                                                    [class.fa-sort-down]="sortConfig.direction === 'desc'"
+                                                    *ngIf="sortConfig.key === col.key"></i>
+                                            </span>
+                                        </div>
+                                    </th>
                                 </ng-container>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Skeleton Rows -->
+                            <ng-container *ngIf="isLoading && doctors.length === 0">
+                                <tr *ngFor="let item of [1,2,3,4,5]">
+                                    <td *ngFor="let col of columnDefinitions"
+                                        [class.text-center]="col.align === 'center'">
+                                        <div class="d-flex align-items-center gap-2"
+                                            [class.justify-content-center]="col.align === 'center'">
+                                            <div *ngIf="col.key === 'profilePhotoUrl'" class="skeleton skeleton-img">
+                                            </div>
+                                            <div *ngIf="col.key === 'actions'" class="d-flex gap-2">
+                                                <div class="skeleton skeleton-btn"></div>
+                                                <div class="skeleton skeleton-btn"></div>
+                                            </div>
+                                            <div *ngIf="col.key !== 'profilePhotoUrl' && col.key !== 'actions'"
+                                                class="skeleton skeleton-text"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
 
-                            </td>
-                        </ng-container>
-                    </tr>
-                    <tr *ngIf="paginatedData.length === 0">
-                        <td [attr.colspan]="columnDefinitions.length" class="text-center py-5 text-muted">
-                            No doctors found.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            <!-- Actual Data -->
+                            <tr *ngFor="let row of paginatedData; let i = index">
+                                <ng-container *ngFor="let col of columnDefinitions">
+                                    <td *ngIf="isColumnVisible(col.key)" [class.text-center]="col.align === 'center'">
 
-        <!-- Pagination Section -->
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="text-muted small">
-                Showing {{ (page-1)*rowsPerPage + 1 }} to {{ Math.min(page*rowsPerPage, filteredData.length) }} of {{
-                filteredData.length }} Doctors
+                                        <!-- Custom Renders -->
+                                        <ng-container [ngSwitch]="col.key">
+
+                                            <!-- Picture -->
+                                            <div *ngSwitchCase="'profilePhotoUrl'">
+                                                <img [src]="getProfileImage(row.profilePhotoUrl)"
+                                                    (error)="handleImageError($event)"
+                                                    class="rounded-circle profile-img-thumb" alt="Profile">
+                                            </div>
+
+                                            <!-- Actions -->
+                                            <div *ngSwitchCase="'actions'" class="d-flex gap-2 justify-content-center">
+                                                <button class="btn btn-sm btn-action view"
+                                                    [routerLink]="['/doctor-profile', row.id]" title="View">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-action edit"
+                                                    [routerLink]="['/edit-doctor', row.id]" title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-action delete"
+                                                    (click)="handleDelete(row.id)" title="Delete">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Default Text -->
+                                            <div *ngSwitchDefault class="text-truncate" [title]="row[col.key]">
+                                                {{ row[col.key] }}
+                                            </div>
+
+                                        </ng-container>
+
+                                    </td>
+                                </ng-container>
+                            </tr>
+                            <tr *ngIf="paginatedData.length === 0 && !isLoading">
+                                <td [attr.colspan]="columnDefinitions.length" class="text-center no-data-cell">
+                                    <div class="no-data-content">
+                                        <i class="fa-solid fa-user-doctor-slash mb-3"></i>
+                                        <p>No doctors found.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Section -->
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-4 pagination-container">
+                    <div class="text-muted small">
+                        Showing {{ (page-1)*rowsPerPage + 1 }} to {{ Math.min(page*rowsPerPage, filteredData.length) }}
+                        of {{
+                        filteredData.length }} Doctors
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" [class.disabled]="page === 1">
+                                <button class="page-link" (click)="page = 1"><i
+                                        class="fa-solid fa-angles-left"></i></button>
+                            </li>
+                            <li class="page-item" [class.disabled]="page === 1">
+                                <button class="page-link" (click)="page = page - 1"><i
+                                        class="fa-solid fa-chevron-left"></i></button>
+                            </li>
+
+                            <li class="page-item disabled"><span class="page-link">Page {{page}} of
+                                    {{totalPages}}</span></li>
+
+                            <li class="page-item" [class.disabled]="page === totalPages">
+                                <button class="page-link" (click)="page = page + 1"><i
+                                        class="fa-solid fa-chevron-right"></i></button>
+                            </li>
+                            <li class="page-item" [class.disabled]="page === totalPages">
+                                <button class="page-link" (click)="page = totalPages"><i
+                                        class="fa-solid fa-angles-right"></i></button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
             </div>
-            <nav>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item" [class.disabled]="page === 1">
-                        <button class="page-link" (click)="page = 1"><i class="fa-solid fa-angles-left"></i></button>
-                    </li>
-                    <li class="page-item" [class.disabled]="page === 1">
-                        <button class="page-link" (click)="page = page - 1"><i
-                                class="fa-solid fa-chevron-left"></i></button>
-                    </li>
-
-                    <li class="page-item disabled"><span class="page-link">Page {{page}} of {{totalPages}}</span></li>
-
-                    <li class="page-item" [class.disabled]="page === totalPages">
-                        <button class="page-link" (click)="page = page + 1"><i
-                                class="fa-solid fa-chevron-right"></i></button>
-                    </li>
-                    <li class="page-item" [class.disabled]="page === totalPages">
-                        <button class="page-link" (click)="page = totalPages"><i
-                                class="fa-solid fa-angles-right"></i></button>
-                    </li>
-                </ul>
-            </nav>
         </div>
-
     </div>
 </div>

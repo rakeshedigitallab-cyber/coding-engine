@@ -1,18 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { DoctorService } from '../../../services/doctor.service';
+import { API_BASE } from '../../../api-config';
 
 @Component({
   selector: 'app-create-doctor',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, RouterLink],
   templateUrl: './create-doctor.component.html',
-  styleUrl: './create-doctor.component.css',
+  styleUrl: './create-doctor.component.css'
 })
-export class CreateDoctorComponent {
-  formData = {
+export class CreateDoctorComponent implements OnInit {
+  formData: any = {
     firstName: '',
     lastName: '',
     email: '',
@@ -25,26 +27,82 @@ export class CreateDoctorComponent {
     aboutDoctor: '',
   };
 
-  selectedFile: File | null = null;
   availableDays: string[] = [];
-  timeRange = {
-    fromTime: '09:00',
-    toTime: '17:00'
-  };
+  timeRange = { fromTime: '09:00', toTime: '17:00' };
   startDate: string = '';
   endDate: string = '';
+  selectedFile: File | null = null;
   loading: boolean = false;
+  isEditMode: boolean = false;
+  doctorId: string | null = null;
 
   days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  private readonly API_BASE = 'http://128.199.27.135:8081';
+  private readonly API_BASE = API_BASE;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  @ViewChild('doctorForm') doctorForm: any;
 
-  handleFileChange(event: any) {
-    if (event.target.files.length > 0) {
-      this.selectedFile = event.target.files[0];
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute,
+    private doctorService: DoctorService,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  ngOnInit() {
+    this.doctorId = this.route.snapshot.paramMap.get('id');
+    if (this.doctorId) {
+      this.isEditMode = true;
+      this.loadDoctorData();
     }
+  }
+
+  loadDoctorData() {
+    this.loading = true;
+    this.http.get<any>(`${this.API_BASE}/api/doctors/${this.doctorId}`).subscribe({
+      next: (res) => {
+        const doctor = res?.data || res;
+        this.formData = {
+          firstName: doctor.firstName || '',
+          lastName: doctor.lastName || '',
+          email: doctor.email || '',
+          phoneNumber: doctor.phoneNumber || '',
+          birthDate: doctor.birthDate || '',
+          gender: doctor.gender || '',
+          education: doctor.education || '',
+          department: doctor.department || '',
+          doctorAddress: doctor.doctorAddress || '',
+          aboutDoctor: doctor.aboutDoctor || '',
+        };
+
+        // Parse Availability "Mon,Tue 09:00-17:00"
+        if (doctor.doctorAvailability) {
+          const parts = doctor.doctorAvailability.split(' ');
+          if (parts[0]) this.availableDays = parts[0].split(',');
+          if (parts[1]) {
+            const times = parts[1].split('-');
+            this.timeRange.fromTime = times[0] || '09:00';
+            this.timeRange.toTime = times[1] || '17:00';
+          }
+        }
+
+        // Parse Date Range "2023-01-01 to 2023-12-31"
+        if (doctor.availableDateRange) {
+          const dates = doctor.availableDateRange.split(' to ');
+          this.startDate = dates[0] || '';
+          this.endDate = dates[1] || '';
+        }
+
+        this.loading = false;
+        this.cdr.detectChanges(); // Sync data with UI immediately
+      },
+      error: (err) => {
+        console.error('Error loading doctor:', err);
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   handleDayToggle(day: string) {
@@ -56,13 +114,20 @@ export class CreateDoctorComponent {
     }
   }
 
+  handleFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
   handleSubmit() {
     this.loading = true;
+    const data = new FormData();
 
-    // Construct availability string like in React: "Mon,Tue 09:00-17:00"
+    // Prepare availability string
     const availability = `${this.availableDays.join(',')} ${this.timeRange.fromTime}-${this.timeRange.toTime}`;
 
-    const data = new FormData();
     const doctorData = {
       ...this.formData,
       doctorAvailability: availability,
@@ -70,26 +135,32 @@ export class CreateDoctorComponent {
       availableDateRange: this.startDate && this.endDate ? `${this.startDate} to ${this.endDate}` : null
     };
 
-    data.append('data', JSON.stringify(doctorData));
+    // Use 'data' to match backend requirement and wrap in Blob for proper JSON part handling
+    data.append('data', new Blob([JSON.stringify(doctorData)], { type: 'application/json' }));
+
     if (this.selectedFile) {
       data.append('file', this.selectedFile);
     }
 
-    // Basic Auth header like in React auth: { username: 'admin', password: 'admin123' }
-    const headers = new HttpHeaders({
-      'Authorization': 'Basic ' + btoa('admin:admin123')
-    });
+    const endpoint = this.isEditMode
+      ? `${this.API_BASE}/api/doctors/${this.doctorId}`
+      : `${this.API_BASE}/api/doctors/create`;
 
-    this.http.post(`${this.API_BASE}/api/doctors/create`, data, { headers }).subscribe({
+    const request = this.isEditMode
+      ? this.http.put(endpoint, data)
+      : this.http.post(endpoint, data);
+
+    request.subscribe({
       next: (res) => {
         this.loading = false;
-        alert('Doctor added successfully!');
+        this.doctorService.clearCache(); // Invalidate list cache
+        alert(this.isEditMode ? 'Doctor updated successfully!' : 'Doctor added successfully!');
         this.router.navigate(['/doctor']);
       },
       error: (err) => {
         this.loading = false;
-        console.error('Error adding doctor:', err);
-        alert(err.error?.message || 'Failed to add doctor');
+        console.error('Error saving doctor:', err);
+        alert(err.error?.message || err.message || 'Failed to save doctor');
       }
     });
   }
