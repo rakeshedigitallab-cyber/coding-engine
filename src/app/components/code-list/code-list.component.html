@@ -34,7 +34,11 @@
                         </div>
                     </div>
 
-                    <div class="action-buttons d-flex gap-2">
+                    <div class="action-buttons d-flex gap-2 align-items-center">
+                        <span *ngIf="isUploading" class="text-primary fw-bold small me-2">
+                            <i class="fa-solid fa-spinner fa-spin me-1"></i> {{ uploadStatusMessage }}
+                        </span>
+
                         <input type="file" #fileInput (change)="handleFileChange($event)" style="display: none">
 
                         <button class="btn btn-outline-light-blue shadow-sm" (click)="downloadExcel()"
@@ -47,8 +51,9 @@
                         </button>
 
                         <button class="btn btn-outline-light-blue shadow-sm" (click)="triggerUpload()"
-                            title="Upload XML File">
-                            <i class="fa-solid fa-file-upload fs-5"></i>
+                            title="Upload XML File" [disabled]="isUploading">
+                            <i *ngIf="!isUploading" class="fa-solid fa-file-upload fs-5"></i>
+                            <i *ngIf="isUploading" class="fa-solid fa-circle-notch fa-spin fs-5"></i>
                         </button>
 
                         <div class="dropdown">

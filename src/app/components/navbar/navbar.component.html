@@ -32,15 +32,91 @@
                 </li>
 
                 <!-- Notifications -->
-                <li class="nav-item">
-                    <a class="nav-link text-white-50 position-relative" href="#">
+                <li class="nav-item dropdown">
+                    <a class="nav-link text-white-50 position-relative" href="#" id="notificationDropdown" role="button" (click)="toggleNotifications($event)">
                         <i class="fa-regular fa-bell fs-5"></i>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                            style="width: 8px; height: 8px;">
-                            <span class="visually-hidden">New alerts</span>
+                        <!-- Red Badge with Notification Count -->
+                        <span *ngIf="unreadCount > 0"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 0.65rem; padding: 0.2em 0.4em; margin-top: 5px;">
+                            {{unreadCount}}
+                            <span class="visually-hidden">unread messages</span>
                         </span>
                     </a>
+                    
+                    <!-- Notification Dropdown Menu -->
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 p-0" [class.show]="isNotificationOpen" style="width: 350px; max-height: 400px; overflow-y: auto; position: absolute; right: 0; top: 100%; margin-top: 8px;">
+                        <!-- Header -->
+                        <div class="dropdown-header d-flex justify-content-between align-items-center p-3 border-bottom bg-white rounded-top" style="position: sticky; top: 0; z-index: 10; background: white;">
+                            <span class="fs-6 fw-bold text-dark mb-0">Notifications</span>
+                            <span class="badge bg-primary rounded-pill px-2 py-1">{{unreadCount}} New</span>
+                        </div>
+                        
+                        <!-- List of Notifications -->
+                        <div class="list-group list-group-flush rounded-0" style="overflow-x: hidden;">
+                            <ng-container *ngIf="notifications.length > 0; else noNotifications">
+                                <a *ngFor="let notification of notifications" 
+                                   href="javascript:void(0)" 
+                                   class="list-group-item list-group-item-action border-0 border-bottom p-3 d-flex align-items-start gap-3"
+                                   [ngStyle]="{
+                                       'background-color': !notification.isRead ? '#f8f9fc' : '#ffffff', 
+                                       'border-left': !notification.isRead ? '4px solid #0d6efd' : '4px solid transparent',
+                                       'transform': swipingItemTransform[notification.id] || 'translateX(0px)',
+                                       'transition': activeSwipeId === notification.id ? 'none' : 'transform 0.3s ease-out'
+                                   }"
+                                   (touchstart)="onSwipeStart($event, notification)"
+                                   (touchmove)="onSwipeMove($event, notification)"
+                                   (touchend)="onSwipeEnd($event, notification)"
+                                   (mousedown)="onSwipeStart($event, notification)"
+                                   (mousemove)="onSwipeMove($event, notification)"
+                                   (mouseup)="onSwipeEnd($event, notification)"
+                                   (mouseleave)="onSwipeEnd($event, notification)"
+                                   (dragstart)="$event.preventDefault()"
+                                   (click)="markAsRead(notification, $event)">
+                                    
+                                    <!-- Icon -->
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                                         [ngClass]="!notification.isRead ? 'bg-primary text-white shadow-sm' : 'bg-light text-secondary'"
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fa-solid" [ngClass]="!notification.isRead ? 'fa-bell' : 'fa-envelope-open'"></i>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex-grow-1 min-vw-0">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-0 text-truncate fw-bold" style="font-size: 0.9rem;" [ngClass]="!notification.isRead ? 'text-dark' : 'text-secondary'">
+                                                {{notification.title || 'System Alert'}}
+                                            </h6>
+                                            <small class="text-muted text-nowrap ms-2" style="font-size: 0.75rem;">
+                                                {{notification.time || (notification.createdAt | date:'shortTime')}}
+                                            </small>
+                                        </div>
+                                        <p class="mb-0 text-muted" style="font-size: 0.85rem; line-height: 1.4; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{notification.message}}
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Unread Dot Indicator -->
+                                    <div *ngIf="!notification.isRead" class="d-flex align-self-center ms-2">
+                                        <span class="bg-danger rounded-circle shadow-sm" style="width: 8px; height: 8px;"></span>
+                                    </div>
+                                </a>
+                            </ng-container>
+
+                            <!-- No Notifications Message -->
+                            <ng-template #noNotifications>
+                                <div class="text-muted text-center py-5">
+                                    <i class="fa-regular fa-bell-slash fs-1 text-light mb-3" style="opacity: 0.5;"></i>
+                                    <p class="mb-0 fw-medium">No new notifications</p>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                         <!-- Footer -->
+                        <div class="p-2 bg-light text-center rounded-bottom border-top" style="position: sticky; bottom: 0; z-index: 10;">
+                            <a class="text-primary fw-semibold text-decoration-none" style="font-size: 0.9rem;" href="#">View all alerts</a>
+                        </div>
+                    </div>
                 </li>
 
                 <!-- User Profile Icon -->
