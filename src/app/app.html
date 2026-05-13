@@ -1,27 +1,31 @@
-<div class="d-flex flex-column h-100 w-100 overflow-hidden">
-  <!-- Top Navbar (Full Width) -->
-  <app-navbar class="flex-shrink-0"></app-navbar>
+@if (isAuthRoute) {
+  <router-outlet></router-outlet>
+} @else {
+  <div class="d-flex flex-column h-100 w-100 overflow-hidden">
+    <!-- Top Navbar (Full Width) -->
+    <app-navbar class="flex-shrink-0"></app-navbar>
 
-  <div class="d-flex flex-grow-1 overflow-hidden position-relative">
-    <!-- Sidebar Container -->
-    <aside class="bg-white border-end h-100" [class.position-fixed]="layoutService.isMobile()"
-      [class.shadow-lg]="layoutService.isMobile() && layoutService.isSidebarOpen()"
-      [style.zIndex]="layoutService.isMobile() ? '1050' : 'auto'"
-      [style.width]="layoutService.isMobile() ? (layoutService.isSidebarOpen() ? '230px' : '0px') : (layoutService.isSidebarOpen() ? '230px' : '70px')"
-      style="transition: width 0.3s ease-in-out; overflow: hidden;">
-      <app-sidebar></app-sidebar>
-    </aside>
+    <div class="d-flex flex-grow-1 overflow-hidden position-relative">
+      <!-- Sidebar Container -->
+      <aside class="bg-white border-end h-100" [class.position-fixed]="layoutService.isMobile()"
+        [class.shadow-lg]="layoutService.isMobile() && layoutService.isSidebarOpen()"
+        [style.zIndex]="layoutService.isMobile() ? '1050' : 'auto'"
+        [style.width]="layoutService.isMobile() ? (layoutService.isSidebarOpen() ? '230px' : '0px') : (layoutService.isSidebarOpen() ? '230px' : '70px')"
+        style="transition: width 0.3s ease-in-out; overflow: hidden;">
+        <app-sidebar></app-sidebar>
+      </aside>
 
-    <!-- Backdrop for Mobile -->
-    @if (layoutService.isMobile() && layoutService.isSidebarOpen()) {
-    <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style="z-index: 1040;"
-      (click)="layoutService.toggleSidebar()"></div>
-    }
+      <!-- Backdrop for Mobile -->
+      @if (layoutService.isMobile() && layoutService.isSidebarOpen()) {
+      <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50" style="z-index: 1040;"
+        (click)="layoutService.toggleSidebar()"></div>
+      }
 
-    <!-- Main Content Area -->
-    <main class="flex-grow-1 overflow-auto bg-light w-100">
-      <!-- Router Outlet: Pages will render here -->
-      <router-outlet></router-outlet>
-    </main>
+      <!-- Main Content Area -->
+      <main class="flex-grow-1 overflow-auto bg-light w-100">
+        <!-- Router Outlet: Pages will render here -->
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
-</div>
+}

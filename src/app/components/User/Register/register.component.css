@@ -1,0 +1,53 @@
+.login-image-col {
+  background-image: url('../../../../assets/images/hospital_login_bg.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100%;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.select-pointer {
+  cursor: pointer;
+}
+
+.z-1 { z-index: 1; }
+.z-2 { z-index: 2; }
+
+/* Slider Container Setup */
+.slider-container {
+  overflow: hidden;
+}
+
+.slider-track {
+  display: flex;
+  width: 200%;
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.slide-pane {
+  width: 50%;
+  flex-shrink: 0;
+}
+
+/* OTP Specific Styling */
+.otp-input {
+  font-size: 2rem;
+  letter-spacing: 0.5rem;
+  font-weight: 700;
+  border-color: #cbd5e1;
+}
+
+.otp-input:focus {
+  border-color: #0d6efd;
+  background: white !important;
+}
+
+.otp-input::placeholder {
+  font-size: 1.5rem;
+  font-weight: normal;
+  letter-spacing: 0.5rem;
+}

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LayoutService } from '../../services/layout.service';
+import { AuthService } from '../../services/auth.service';
 
 interface MenuItem {
   title: string;
@@ -20,9 +21,9 @@ interface MenuItem {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent {
-  userName: string = 'Mohan Krishna';
-  userEmail: string = 'mohan.krishna@syntax.com';
+export class SidebarComponent implements OnInit {
+  userName: string = 'Loading...';
+  userEmail: string = '';
   userImage: string = 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?semt=ais_hybrid&w=740&q=80';
   isProfileExpanded: boolean = false;
 
@@ -172,7 +173,45 @@ export class SidebarComponent {
     }
   ];
 
-  constructor(public layoutService: LayoutService) { }
+  constructor(
+    public layoutService: LayoutService,
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn) {
+      this.fetchUserProfile();
+    }
+  }
+
+  fetchUserProfile() {
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        if (user) {
+          this.userName = user.fullName || user.name || 'User';
+          this.userEmail = user.email || '';
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load user profile:', err);
+      }
+    });
+  }
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Logout failed:', err);
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
   toggle(item: MenuItem) {
     if (item.children) {

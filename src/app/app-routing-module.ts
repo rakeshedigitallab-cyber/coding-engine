@@ -9,24 +9,27 @@ import { AppointmentComponent } from './components/appointment/appointment.compo
 import { DoctorListComponent } from './components/doctor/doctor-list/doctor-list.component';
 import { CreateDoctorComponent } from './components/doctor/create-doctor/create-doctor.component';
 import { DoctorProfileComponent } from './components/doctor/doctor-profile/doctor-profile.component';
-
+import { LoginComponent } from './components/User/Login/login.component';
+import { RegisterComponent } from './components/User/Register/register.component';
+import { authGuard, guestGuard } from './guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'codes', component: CodeListComponent },
-  { path: 'billing', component: BillingComponent },
-  { path: 'patients', component: PatientsListComponent },
-  { path: 'new', component: CreatePatientsComponent },
-  { path: 'appointment', component: AppointmentComponent },
-  { path: 'doctor', component: DoctorListComponent },
-  { path: 'doctor-profile/:id', component: DoctorProfileComponent },
-  { path: 'edit-patient/:id', component: CreatePatientsComponent },
-  { path: 'create-doctor', component: CreateDoctorComponent },
-  { path: 'edit-doctor/:id', component: CreateDoctorComponent },
-  // Wildcard route for 404 (optional for now, but good practice)
-  { path: '**', redirectTo: '' }
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+  { path: '', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'codes', component: CodeListComponent, canActivate: [authGuard] },
+  { path: 'billing', component: BillingComponent, canActivate: [authGuard] },
+  { path: 'patients', component: PatientsListComponent, canActivate: [authGuard] },
+  { path: 'new', component: CreatePatientsComponent, canActivate: [authGuard] },
+  { path: 'appointment', component: AppointmentComponent, canActivate: [authGuard] },
+  { path: 'doctor', component: DoctorListComponent, canActivate: [authGuard] },
+  { path: 'doctor-profile/:id', component: DoctorProfileComponent, canActivate: [authGuard] },
+  { path: 'edit-patient/:id', component: CreatePatientsComponent, canActivate: [authGuard] },
+  { path: 'create-doctor', component: CreateDoctorComponent, canActivate: [authGuard] },
+  { path: 'edit-doctor/:id', component: CreateDoctorComponent, canActivate: [authGuard] },
+  // Wildcard route for 404
+  { path: '**', redirectTo: 'login' }
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

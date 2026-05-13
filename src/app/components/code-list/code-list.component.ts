@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, inject, ChangeDetectorRef } f
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpEventType, HttpErrorResponse } from '@angular/common/http';
 import { API_BASE } from '../../api-config';
 
 interface ColumnDef {
@@ -33,6 +33,8 @@ export class CodeListComponent implements OnInit {
   isLoading: boolean = false;
   isUploading: boolean = false;
   isDownloading: boolean = false;
+  uploadProgress: number = 0;
+  uploadStatusMessage: string = '';
 
   sortConfig = { key: '', direction: 'asc' };
   hiddenColumns: string[] = []; // Default to show all headers as per user request
@@ -218,21 +220,58 @@ export class CodeListComponent implements OnInit {
     if (file) {
       this.uploadXmlFile(file);
     }
+    event.target.value = '';
   }
 
   uploadXmlFile(file: File) {
     const formData = new FormData();
     formData.append('file', file);
     this.isUploading = true;
-    this.http.post(`${this.API_BASE}/icd10/post`, formData).subscribe({
-      next: () => {
-        this.isUploading = false;
-        this.fetchData();
-        alert('Upload successful!');
+    this.uploadProgress = 0;
+    this.uploadStatusMessage = 'Uploading...';
+    this.cdr.detectChanges();
+
+    this.http.post(`${this.API_BASE}/icd10/post`, formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'text' as 'json'
+    }).subscribe({
+      next: (event: any) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          if (event.total) {
+            this.uploadProgress = Math.round(100 * event.loaded / event.total);
+            if (this.uploadProgress === 100) {
+              this.uploadStatusMessage = 'Processing on server...';
+            } else {
+              this.uploadStatusMessage = `Uploading... ${this.uploadProgress}%`;
+            }
+          } else {
+            this.uploadStatusMessage = `Uploading... ${Math.round(event.loaded / 1024)} KB`;
+          }
+          this.cdr.detectChanges();
+        } else if (event.type === HttpEventType.Response) {
+          this.isUploading = false;
+          this.uploadStatusMessage = '';
+          this.cdr.detectChanges();
+          this.fetchData();
+          alert('Upload successful!');
+        }
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
+        console.error('Upload Error:', err);
         this.isUploading = false;
-        alert('Upload failed!');
+        this.uploadStatusMessage = '';
+        this.cdr.detectChanges();
+        
+        let errorMessage = 'Upload failed!';
+        if (err.error instanceof ErrorEvent) {
+          errorMessage = `Client/Network Error: ${err.error.message}`;
+        } else if (err.status === 0) {
+          errorMessage = `Server unreachable or connection timed out.`;
+        } else {
+          errorMessage = `Server Error Code: ${err.status} - ${err.statusText}`;
+        }
+        alert(`${errorMessage}\n\nPlease check if the file is too large or if the server took too long to respond. Check browser console for more details.`);
       }
     });
   }
